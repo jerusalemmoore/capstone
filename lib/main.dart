@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/gestures.dart';
+import 'Registration.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,22 +19,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        accentColor: Colors.lightBlueAccent,
-      ),
-      home: MyHomePage(title: 'Landing Page'),
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          primarySwatch: Colors.blue,
+          accentColor: Colors.lightBlueAccent,
+        ),
+        initialRoute: 'home',
+        routes: {
+          'home': (context) => MyHomePage(title: 'Landing Page'),
+          'registration': (context) => RegistrationPage(title: "Registration"),
+        });
   }
 }
 
@@ -102,7 +107,7 @@ class SignInFormState extends State<SignInForm> {
                           return null;
                         })),
                 Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
                     child: TextFormField(
                         decoration: InputDecoration(
                           fillColor: Colors.white,
@@ -115,15 +120,36 @@ class SignInFormState extends State<SignInForm> {
                             return "Please enter username";
                           }
                           return null;
-                        }))
+                        })),
+                Padding(
+                    padding: EdgeInsets.all(1),
+                    child: RichText(
+                      text: TextSpan(
+                          style: DefaultTextStyle.of(context).style,
+                          children: <TextSpan>[
+                            TextSpan(text: "Don't have an account? Register "),
+                            TextSpan(
+                                style: TextStyle(color: Colors.pink),
+                                text: "here",
+                                recognizer: TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Navigator.pushNamed(
+                                        context, 'registration');
+                                  }
+
+                                // print('Terms of Service"');
+                                ),
+                          ]),
+                    ))
 
                 // Add TextFormFields and ElevatedButton here.
               ],
             ),
-          ))
+          )),
     ]);
   }
 }
+
 //SIGN IN PAGE
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key? key, required this.title}) : super(key: key);
@@ -167,44 +193,44 @@ class _MyHomePageState extends State<MyHomePage> {
                 // the App.build method, and use it to set our appbar title.
                 title: Text(widget.title),
               ),
-              body: Center(
+              body: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: NetworkImage(
+                            'https://i.pinimg.com/originals/1a/7a/0c/1a7a0cc45910acf9fac16b292c7034c7.jpg'),
+                        fit: BoxFit.cover),
+                  ),
                   // Center is a layout widget. It takes a single child and positions it
                   // in the middle of the parent.
-                  child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: NetworkImage(
-                          'https://i.pinimg.com/originals/1a/7a/0c/1a7a0cc45910acf9fac16b292c7034c7.jpg'),
-                      fit: BoxFit.cover),
-                ),
-                child: Column(
-                  // Column is also a layout widget. It takes a list of children and
-                  // arranges them vertically. By default, it sizes itself to fit its
-                  // children horizontally, and tries to be as tall as its parent.
-                  //
-                  // Invoke "debug painting" (press "p" in the console, choose the
-                  // "Toggle Debug Paint" action from the Flutter Inspector in Android
-                  // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-                  // to see the wireframe for each widget.
-                  //
-                  // Column has various properties to control how it sizes itself and
-                  // how it positions its children. Here we use mainAxisAlignment to
-                  // center the children vertically; the main axis here is the vertical
-                  // axis because Columns are vertical (the cross axis would be
-                  // horizontal).
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    SignInForm(),
-                    // Text(
-                    //   'You have clicked the button this many times:',
-                    // ),
-                    // Text(
-                    //   '$_counter',
-                    //   style: Theme.of(context).textTheme.headline4,
-                    // ),
-                  ],
-                ),
-              )),
+                  child: Center(
+                    child: Column(
+                      // Column is also a layout widget. It takes a list of children and
+                      // arranges them vertically. By default, it sizes itself to fit its
+                      // children horizontally, and tries to be as tall as its parent.
+                      //
+                      // Invoke "debug painting" (press "p" in the console, choose the
+                      // "Toggle Debug Paint" action from the Flutter Inspector in Android
+                      // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+                      // to see the wireframe for each widget.
+                      //
+                      // Column has various properties to control how it sizes itself and
+                      // how it positions its children. Here we use mainAxisAlignment to
+                      // center the children vertically; the main axis here is the vertical
+                      // axis because Columns are vertical (the cross axis would be
+                      // horizontal).
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        SignInForm(),
+                        // Text(
+                        //   'You have clicked the button this many times:',
+                        // ),
+                        // Text(
+                        //   '$_counter',
+                        //   style: Theme.of(context).textTheme.headline4,
+                        // ),
+                      ],
+                    ),
+                  )),
               // This trailing comma makes auto-formatting nicer for build methods.
             );
           } else {
