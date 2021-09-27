@@ -1,3 +1,5 @@
+
+import 'package:capstone/registerCreator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -37,6 +39,7 @@ class MyApp extends StatelessWidget {
         routes: {
           'home': (context) => MyHomePage(title: 'Landing Page'),
           'registration': (context) => RegistrationPage(title: "Registration"),
+          'creatorRegistration': (context) => CreatorRegistrationPage(title: "New Creator")
         });
   }
 }
@@ -71,7 +74,7 @@ class SignInFormState extends State<SignInForm> {
       RichText(
           text: TextSpan(children: [
         TextSpan(
-            text: 'Login',
+            text: 'ARTSY',
             style: GoogleFonts.abhayaLibre(
                 textStyle: TextStyle(
               fontWeight: FontWeight.bold,
@@ -122,7 +125,7 @@ class SignInFormState extends State<SignInForm> {
                           return null;
                         })),
                 Padding(
-                    padding: EdgeInsets.all(1),
+                    padding: EdgeInsets.all(5),
                     child: RichText(
                       text: TextSpan(
                           style: DefaultTextStyle.of(context).style,
@@ -140,12 +143,24 @@ class SignInFormState extends State<SignInForm> {
                                 // print('Terms of Service"');
                                 ),
                           ]),
-                    ))
+                    )),
+                Padding(
+                  padding: EdgeInsets.all(10),
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                    ),
+                    onPressed: () { },
+                    child: Text('Login'),
+                  )
+                )
+
 
                 // Add TextFormFields and ElevatedButton here.
               ],
             ),
           )),
+
     ]);
   }
 }

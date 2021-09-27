@@ -14,15 +14,10 @@ class RegistrationPage extends StatefulWidget {
   _RegistrationPageState createState() => _RegistrationPageState();
 }
 
-class RegistrationForm extends StatefulWidget {
-  const RegistrationForm({Key? key}) : super(key: key);
 
-  @override
-  RegistrationFormState createState() {
-    return RegistrationFormState();
-  }
-}
-
+//presents two buttons for user to choose from
+//the choice effects how whether the user is registered as a
+//creator or a patron
 class UserChoiceButtons extends StatefulWidget {
   const UserChoiceButtons({Key? key}) : super(key: key);
 
@@ -31,7 +26,8 @@ class UserChoiceButtons extends StatefulWidget {
     return UserChoiceButtonsState();
   }
 }
-
+//state implementation of userchoicebuttons widget
+//two choices, Creator and Patron
 class UserChoiceButtonsState extends State<UserChoiceButtons> {
   final userChoiceButtonsKey = GlobalKey<UserChoiceButtonsState>();
 
@@ -52,12 +48,16 @@ class UserChoiceButtonsState extends State<UserChoiceButtons> {
 
               // style: TextStyle(fontFamily: 'RototoMono')
               )),
+      //CREATOR CARD
       Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: InkWell(
           splashColor: Colors.blue.withAlpha(30),
           onTap: () {
-            print('Card tapped.');
+            //navigate to creator registration
+            Navigator.pushNamed(
+                context, 'creatorRegistration');
+            // print('Card tapped.');
           },
           child: SizedBox(
               width: 300,
@@ -77,15 +77,15 @@ class UserChoiceButtonsState extends State<UserChoiceButtons> {
                                       fontSize: 25,
                                     ))),
                           ]
-
-                            // style: TextStyle(fontFamily: 'RototoMono')
                           )),
                     ),
                     Padding(
                         padding: EdgeInsets.all(5),
                         child: RichText(
+                          textAlign: TextAlign.center,
                             text: TextSpan(
-                                text: 'Show your work to patrons/creators near you',
+                                text: 'Show your work to patrons/creators near you through posts',
+
                                 style: GoogleFonts.abhayaLibre(
                                     textStyle: TextStyle(
                                       // fontWeight: FontWeight.bold,
@@ -97,11 +97,13 @@ class UserChoiceButtonsState extends State<UserChoiceButtons> {
                   ])),
         ),
       ),
+      //PATRON CARD
       Card(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: InkWell(
           splashColor: Colors.blue.withAlpha(30),
           onTap: () {
+            //navigate to patron registration
             print('Card tapped.');
           },
           child: SizedBox(
@@ -129,6 +131,7 @@ class UserChoiceButtonsState extends State<UserChoiceButtons> {
                 Padding(
                   padding: EdgeInsets.all(5),
                   child: RichText(
+                    textAlign: TextAlign.center,
                     text: TextSpan(
                         text: 'Find works by creators near you',
                         style: GoogleFonts.abhayaLibre(
@@ -146,94 +149,7 @@ class UserChoiceButtonsState extends State<UserChoiceButtons> {
   }
 }
 
-class RegistrationFormState extends State<RegistrationForm> {
-  final _formKey = GlobalKey<FormState>();
 
-  @override
-  Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
-    return Column(children: <Widget>[
-      RichText(
-          text: TextSpan(children: [
-        TextSpan(
-            text: 'Login',
-            style: GoogleFonts.abhayaLibre(
-                textStyle: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontSize: 50,
-            ))),
-      ]
-
-              // style: TextStyle(fontFamily: 'RototoMono')
-              )),
-      Form(
-          key: _formKey,
-          child: Container(
-            padding: EdgeInsets.all(40),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(200),
-            ),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.all(10),
-                    child: TextFormField(
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(),
-                          labelText: 'User name',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter username";
-                          }
-                          return null;
-                        })),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                    child: TextFormField(
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(),
-                          labelText: 'Password',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter username";
-                          }
-                          return null;
-                        })),
-                Padding(
-                    padding: EdgeInsets.all(1),
-                    child: RichText(
-                      text: TextSpan(
-                          style: DefaultTextStyle.of(context).style,
-                          children: <TextSpan>[
-                            TextSpan(text: "Don't have an account? Register "),
-                            TextSpan(
-                                style: TextStyle(color: Colors.pink),
-                                text: "here",
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    Navigator.pushNamed(
-                                        context, 'registration');
-                                  }
-
-                                // print('Terms of Service"');
-                                ),
-                          ]),
-                    ))
-
-                // Add TextFormFields and ElevatedButton here.
-              ],
-            ),
-          )),
-    ]);
-  }
-}
 
 class _RegistrationPageState extends State<RegistrationPage> {
   Widget build(BuildContext context) {
