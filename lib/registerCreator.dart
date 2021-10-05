@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter/gestures.dart';
 //TODO: YOU STILL NEED PASSWORD AND USERNAME TO VALIDATE FROM FIREBASE(SECONDARY)
 //TODO: YOU STILL NEED TO VALIDATE ADDRESS WITH GOOGLE PLACES(PRIMARY)
@@ -167,8 +168,7 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: <
-        Widget>[
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       Padding(
         padding: EdgeInsets.only(top: 20),
         child: RichText(
