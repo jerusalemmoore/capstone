@@ -1,3 +1,5 @@
+//This widget provides user with choice of creating either a creator account or a patron account
+//Patron accounts are somewhat reduntant to creators and will therefore be a version 2 feature
 import 'map.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';

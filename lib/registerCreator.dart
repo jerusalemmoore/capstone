@@ -1,3 +1,4 @@
+//Form in order to register user to firebase auth and firestore with a creator account
 import 'map.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -6,17 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter/gestures.dart';
-//TODO: YOU STILL NEED PASSWORD AND USERNAME TO VALIDATE FROM FIREBASE(SECONDARY)
-//TODO: YOU STILL NEED TO VALIDATE ADDRESS WITH GOOGLE PLACES(PRIMARY)
-//TODO: FINISH SIGN IN LOGIC AT SIGN IN SCREEN, SHOULD BE SIMILAR TO REGISTRATION(PRIMARY)
-//TODO: HOME PAGE NEEDS PROFILE PIC, USERNAME OR EMAIL DISPLAYED, SPACE FOR POSTS (PRIMARY)
-//TODO: HOME ALSO NEEDS AN ABOUT, CAN UPDATE WITH FORM(PRIMARY)
-//TODO: POST FUNCTIONS AND TIMELINE STORAGE(PRIMARY)
-//TODO: IMAGE PICKER WILL BE IMPORTANT FOR POSTS
-//TODO: POSTS SHOULD BE CREATED WITH FORM
-//TODO: GEOLOCATION TO GET CURRENT LOCATION
-//TODO: DISTANCE MATRIX TO GET DISTANCE BETWEEN CURRENT TO ADDRESS
-//TODO MAP WIDGET THAT GETS LOCATION POSTS
+import 'placeSuggestionField.dart';
+
 
 //registration form for a Creator
 //fields:
@@ -273,24 +265,26 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                 //form field for address
                 Padding(
                     padding: EdgeInsets.all(10),
-                    child: TextFormField(
-                        controller: addressController,
-                        onChanged: (text) {
-                          print("Address: $text");
-                        },
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(),
-                          labelText: 'Address',
-                        ),
-                        //validators, isEmpty, is valid address
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter valid address";
-                          }
-                          return null;
-                        })),
+                    child: PlaceSuggestionField(addressController)
+                    // TextFormField(
+                    //     controller: addressController,
+                    //     onChanged: (text) {
+                    //       print("Address: $text");
+                    //     },
+                    //     decoration: InputDecoration(
+                    //       fillColor: Colors.white,
+                    //       filled: true,
+                    //       border: OutlineInputBorder(),
+                    //       labelText: 'Address',
+                    //     ),
+                    //     //validators, isEmpty, is valid address
+                    //     validator: (value) {
+                    //       if (value == null || value.isEmpty) {
+                    //         return "Please enter valid address";
+                    //       }
+                    //       return null;
+                    //     })
+                ),
                 Padding(
                     padding: EdgeInsets.all(10),
                     child: ElevatedButton(
@@ -376,52 +370,58 @@ class _CreatorRegistrationPageState extends State<CreatorRegistrationPage> {
             // Center is a layout widget. It takes a single child and positions it
             // in the middle of the parent.
             child: Center(
-                child: SingleChildScrollView(
-              child: Column(
-                // Column is also a layout widget. It takes a list of children and
-                // arranges them vertically. By default, it sizes itself to fit its
-                // children horizontally, and tries to be as tall as its parent.
-                //
-                // Invoke "debug painting" (press "p" in the console, choose the
-                // "Toggle Debug Paint" action from the Flutter Inspector in Android
-                // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-                // to see the wireframe for each widget.
-                //
-                // Column has various properties to control how it sizes itself and
-                // how it positions its children. Here we use mainAxisAlignment to
-                // center the children vertically; the main axis here is the vertical
-                // axis because Columns are vertical (the cross axis would be
-                // horizontal).
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  CreatorRegistrationForm(),
-                  // FutureBuilder<DocumentSnapshot>(
-                  //   future: creators.doc(currentUser!.email).get(),
-                  //   builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot){
-                  //     if(snapshot.hasError){
-                  //       return Text('$snapshot.error');
-                  //     }
-                  //     if(snapshot.hasData && !snapshot.data!.exists){
-                  //       return Text("file doesn't exist");
-                  //
-                  //     }
-                  //     if(snapshot.connectionState == ConnectionState.done){
-                  //       Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-                  //       return Text("Full Name: ${data['email']} ${data['password']}");
-                  //     }
-                  //     return Text("loading");
-                  //   }
-                  // )
+                child: DraggableScrollableSheet(
+                  initialChildSize:1 ,
+                  expand: true,
+                  builder: (context, scrollController){
+                    return SingleChildScrollView(
+                      child: Column(
+                        // Column is also a layout widget. It takes a list of children and
+                        // arranges them vertically. By default, it sizes itself to fit its
+                        // children horizontally, and tries to be as tall as its parent.
+                        //
+                        // Invoke "debug painting" (press "p" in the console, choose the
+                        // "Toggle Debug Paint" action from the Flutter Inspector in Android
+                        // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+                        // to see the wireframe for each widget.
+                        //
+                        // Column has various properties to control how it sizes itself and
+                        // how it positions its children. Here we use mainAxisAlignment to
+                        // center the children vertically; the main axis here is the vertical
+                        // axis because Columns are vertical (the cross axis would be
+                        // horizontal).
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          CreatorRegistrationForm(),
+                          // FutureBuilder<DocumentSnapshot>(
+                          //   future: creators.doc(currentUser!.email).get(),
+                          //   builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot){
+                          //     if(snapshot.hasError){
+                          //       return Text('$snapshot.error');
+                          //     }
+                          //     if(snapshot.hasData && !snapshot.data!.exists){
+                          //       return Text("file doesn't exist");
+                          //
+                          //     }
+                          //     if(snapshot.connectionState == ConnectionState.done){
+                          //       Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
+                          //       return Text("Full Name: ${data['email']} ${data['password']}");
+                          //     }
+                          //     return Text("loading");
+                          //   }
+                          // )
 
-                  // Text(
-                  //   'You have clicked the button this many times:',
-                  // ),
-                  // Text(
-                  //   '$_counter',
-                  //   style: Theme.of(context).textTheme.headline4,
-                  // ),
-                ],
-              ),
-            ))));
+                          // Text(
+                          //   'You have clicked the button this many times:',
+                          // ),
+                          // Text(
+                          //   '$_counter',
+                          //   style: Theme.of(context).textTheme.headline4,
+                          // ),
+                        ],
+                      ),
+                    );
+                  }
+                ))));
   }
 }

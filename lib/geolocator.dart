@@ -1,3 +1,4 @@
+//simple implementation of geolocation widget for use on explore page and map
 import 'dart:async';
 import 'dart:math';
 import 'package:location/location.dart';

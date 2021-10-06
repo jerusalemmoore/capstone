@@ -65,4 +65,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    //places functionality
+    implementation 'com.google.android.libraries.places:places:2.4.0'
+
 }
