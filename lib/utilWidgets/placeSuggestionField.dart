@@ -1,14 +1,6 @@
 //This is a simple widget that produces location suggestions as user types into form field
 //requires a controller that will be used for form field
-import 'map.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:flutter/gestures.dart';
-import 'placeSuggestionField.dart';
 import 'package:google_place/google_place.dart';
 
 class PlaceSuggestionField extends StatefulWidget {
@@ -66,7 +58,7 @@ class PlaceSuggestionFieldState extends State<PlaceSuggestionField> {
                       fillColor: Colors.white,
                       filled: true,
                       border: OutlineInputBorder(),
-                      labelText: 'Password',
+                      labelText: 'Address',
                     ),
                     onChanged: (value) {
                       if (value.isNotEmpty) {
@@ -93,6 +85,7 @@ class PlaceSuggestionFieldState extends State<PlaceSuggestionField> {
                 ),
                 // Expanded(
                 //   child:
+                //print size of this list to make sure all suggestions show up
                 SingleChildScrollView(
                   child: ListView.builder(
                     physics: ScrollPhysics(),
@@ -116,6 +109,11 @@ class PlaceSuggestionFieldState extends State<PlaceSuggestionField> {
                             onTap: () {
                               widget.addressController.text =
                                   predictions[index].description!;
+                              //empty predictions since user selected address
+                              // setState(() {
+                              //   predictions.clear();
+                              //
+                              // });
                             },
                           ));
                       //   ListTile(

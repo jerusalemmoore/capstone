@@ -1,5 +1,5 @@
 //Capstone Project (Artsy) application entry point
-import 'package:capstone/registerCreator.dart';
+import 'package:capstone/pageWidgets/registerCreator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/gestures.dart';
 import 'Registration.dart';
-
+import 'home.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   //inflate MyApp() and attach to screen
@@ -32,14 +32,14 @@ class MyApp extends StatelessWidget {
           // or simply save your changes to "hot reload" in a Flutter IDE).
           // Notice that the counter didn't reset back to zero; the application
           // is not restarted.
-          primarySwatch: Colors.blue,
-          accentColor: Colors.lightBlueAccent,
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue).copyWith(secondary: Colors.lightBlueAccent),
         ),
-        initialRoute: 'home',
+        initialRoute: 'landing',
         routes: {
-          'home': (context) => MyHomePage(title: 'Landing Page'),
+          'landing': (context) => LandingPage(title: 'Landing Page'),
           'registration': (context) => RegistrationPage(title: "Registration"),
-          'creatorRegistration': (context) => CreatorRegistrationPage(title: "New Creator")
+          'creatorRegistration': (context) => CreatorRegistrationPage(title: "New Creator"),
+          'userHome': (context) => HomePage(title: 'Home')
         });
   }
 }
@@ -60,12 +60,55 @@ class SignInForm extends StatefulWidget {
 }
 
 class SignInFormState extends State<SignInForm> {
+  var email;
+  var password;
+  final _formKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   //
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
-  final _formKey = GlobalKey<FormState>();
+  @override
+  void dispose(){
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+
+  }
+  @override
+  void initState(){
+    emailController.addListener(setEmail);
+    passwordController.addListener(setPassword);
+    super.initState();
+  }
+  void setEmail() {
+    email = emailController.text;
+  }
+
+  void setPassword() {
+    password = passwordController.text;
+  }
+  Future<bool> signInCreator() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+        return Future<bool>.value(true);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+        return Future<bool>.value(false);
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+        return Future<bool>.value(false);
+      }
+    } catch (e) {
+      print(e);
+      return Future<bool>.value(false);
+    }
+    return Future<bool>.value(true);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +140,7 @@ class SignInFormState extends State<SignInForm> {
                 Padding(
                     padding: EdgeInsets.all(10),
                     child: TextFormField(
+                      controller:emailController,
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
@@ -112,6 +156,11 @@ class SignInFormState extends State<SignInForm> {
                 Padding(
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
                     child: TextFormField(
+                      controller: passwordController,
+                        onChanged: (text){
+                        print("$password");
+                        print(text);
+                        },
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
@@ -150,7 +199,38 @@ class SignInFormState extends State<SignInForm> {
                     style: ButtonStyle(
                       foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
                     ),
-                    onPressed: () { },
+                    onPressed: () async {
+                      if(_formKey.currentState!.validate()){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Processing Data')),
+                        );
+                      }
+                      bool success = await signInCreator();
+                      if (success) {
+                       FirebaseAuth.instance
+                            .idTokenChanges()
+                            .listen((User? user) {
+                          if (user == null) {
+                            print('User is currently signed out!');
+                          } else {
+                            print('User is signed in!');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('User signing in')),
+
+                            );
+                            Navigator.pushNamed(
+                                context, 'userHome'
+                            );
+                            //NAVIGATE TO HOME SCREEN WIDGET HERE
+                          }
+                        });
+                        // addCreator();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Error processing data')),
+                        );
+                      }
+                    },
                     child: Text('Login'),
                   )
                 )
@@ -166,8 +246,8 @@ class SignInFormState extends State<SignInForm> {
 }
 
 //SIGN IN PAGE
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+class LandingPage extends StatefulWidget {
+  LandingPage({Key? key, required this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -181,10 +261,10 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _LandingPageState createState() => _LandingPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _LandingPageState extends State<LandingPage> {
   //INITIALIZE FIREBASE APPLICATION
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
@@ -204,6 +284,7 @@ class _MyHomePageState extends State<MyHomePage> {
           if (snapshot.connectionState == ConnectionState.done) {
             return Scaffold(
               appBar: AppBar(
+                // automaticallyImplyLeading: false,
                 // Here we take the value from the MyHomePage object that was created by
                 // the App.build method, and use it to set our appbar title.
                 title: Text(widget.title),

@@ -1,5 +1,5 @@
 //Form in order to register user to firebase auth and firestore with a creator account
-import 'map.dart';
+import 'homeWidgets/map.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter/gestures.dart';
-import 'placeSuggestionField.dart';
+import '../utilWidgets/placeSuggestionField.dart';
 
 
 //registration form for a Creator
@@ -55,11 +55,12 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
   final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
-    super.initState();
     usernameController.addListener(setUsername);
     emailController.addListener(setEmail);
     passwordController.addListener(setPassword);
     addressController.addListener(setAddress);
+    super.initState();
+
   }
 
   //SET METHODS
@@ -318,6 +319,10 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                                 print('User is signed in!');
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text('User signing in')),
+
+                                );
+                                Navigator.pushNamed(
+                                  context, 'userHome'
                                 );
                                 //NAVIGATE TO HOME SCREEN WIDGET HERE
                               }

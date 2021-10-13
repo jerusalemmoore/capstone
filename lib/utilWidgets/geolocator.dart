@@ -11,12 +11,12 @@ import 'package:geolocator/geolocator.dart';
 //CURRENTLY WIDGET IS CALLED TESTWIDGET, MIGHT WANT TO CHANGE NAME TO GEOLOCATOR
 const kGoogleApiKey = "AIzaSyAnv3Mv89UoA9m4Jiw9jxeCyVoVDKg9M9w";
 
-class TestWidget extends StatefulWidget {
-  const TestWidget({Key? key}) : super(key: key);
+class MapWidget extends StatefulWidget {
+  const MapWidget({Key? key}) : super(key: key);
 
   @override
-  TestWidgetState createState() {
-    return TestWidgetState();
+  MapWidgetState createState() {
+    return MapWidgetState();
   }
 }
 
@@ -32,9 +32,13 @@ class _PositionItem {
   final String displayValue;
 }
 
-class TestWidgetState extends State<TestWidget> {
+class MapWidgetState extends State<MapWidget> {
+  final homeScaffoldKey = GlobalKey<ScaffoldState>();
+  final searchScaffoldKey = GlobalKey<ScaffoldState>();
   final List<_PositionItem> _positionItems = <_PositionItem>[];
   late Position currentPosition;
+  late GoogleMapController mapController;
+  late LatLng _center;
   static const String _kLocationServicesDisabledMessage =
       'Location services are disabled.';
   static const String _kPermissionDeniedMessage = 'Permission denied.';
@@ -44,6 +48,17 @@ class TestWidgetState extends State<TestWidget> {
 
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
 
+  @override
+  void initState(){
+    loadPos();
+    super.initState();
+    // await _handlePermission();
+    // currentPosition = await loadPos();
+  }
+  void dispose(){
+    mapController.dispose();
+    super.dispose();
+  }
   // Future<void> _getCurrentPosition() async {
   //   final hasPermission = await _handlePermission();
   //
@@ -118,6 +133,8 @@ class TestWidgetState extends State<TestWidget> {
     bool permission = await _handlePermission();
     if(permission){
        currentPosition = await Geolocator.getCurrentPosition();
+       _center = LatLng(currentPosition.latitude, currentPosition.longitude);
+
     }
     else{
 
@@ -129,27 +146,32 @@ class TestWidgetState extends State<TestWidget> {
   //   setState(() {});
   // }
 
-  @override
-  void initState(){
-    super.initState();
-    loadPos();
-    // await _handlePermission();
-    // currentPosition = await loadPos();
-  }
 
+  void _onMapCreated(GoogleMapController controller) {
+    mapController = controller;
+  }
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
       future: loadPos(),
       builder: (context, snapshot){
         if(snapshot.connectionState == ConnectionState.done){
-          return Text("$currentPosition");
+          return GoogleMap(
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
+            onMapCreated: _onMapCreated,
+            initialCameraPosition: CameraPosition(
+              target:  _center,
+                zoom: 15
+            )
+
+          );
         }
         else if(snapshot.hasError){
           return Text("Error");
         }
         else{
-          return CircularProgressIndicator();
+          return Center(child:CircularProgressIndicator());
         }
       }
     );Column(
@@ -160,32 +182,28 @@ class TestWidgetState extends State<TestWidget> {
   }
 }
 
-main() {
-  runApp(MyApp());
-}
 
 // custom scaffold that handle search
 // basically your widget need to extends [GooglePlacesAutocompleteWidget]
 // and your state [GooglePlacesAutocompleteState]
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
+// class MyApp extends StatefulWidget {
+//   @override
+//   _MyAppState createState() => _MyAppState();
+// }
 
-final homeScaffoldKey = GlobalKey<ScaffoldState>();
-final searchScaffoldKey = GlobalKey<ScaffoldState>();
 
-class _MyAppState extends State<MyApp> {
-  Mode _mode = Mode.overlay;
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Column(
-        children: <Widget>[
-          TestWidget(),
-        ]
-      )
-    );
-  }
-}
+// class _MyAppState extends State<MyApp> {
+//   Mode _mode = Mode.overlay;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       home: Column(
+//         children: <Widget>[
+//           TestWidget(),
+//         ]
+//       )
+//     );
+//   }
+// }

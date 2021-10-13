@@ -47,6 +47,8 @@ dependencies:
   http: ^0.13.4
   google_place: ^0.4.3
   flutter_dotenv: ^5.0.2
+  image_picker: ^0.8.4+2
+  video_player: ^2.2.5
 
 
 
