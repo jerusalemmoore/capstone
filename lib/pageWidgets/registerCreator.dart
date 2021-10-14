@@ -246,6 +246,7 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                 Padding(
                     padding: EdgeInsets.all(10),
                     child: TextFormField(
+                      obscureText: true,
                         controller: passwordController,
                         onChanged: (text) {
                           print("Password: $text");

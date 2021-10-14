@@ -11,6 +11,8 @@ import 'homeWidgets/map.dart';
 import 'homeWidgets/homeMain.dart';
 import '../utilWidgets/geolocator.dart';
 import 'homeWidgets/explore.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -58,6 +60,47 @@ class HomePageState extends State<HomePage>{
   @override
   Widget build(BuildContext context){
     return Scaffold(
+      floatingActionButton: Visibility(
+        visible:  screenIndex == 0 ? true:false,
+        child:SpeedDial(
+        icon: Icons.add,
+        backgroundColor: Colors.lightBlue,
+          // childMargin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          children: [
+            SpeedDialChild(
+              child: const Icon(Icons.video_call) ,
+              backgroundColor: Colors.lightBlue[600],
+              foregroundColor: Colors.white,
+              label: 'Post Video',
+              onTap: () => debugPrint("FIRST CHILD"),
+            ),
+            SpeedDialChild(
+              child:const Icon(Icons.add_a_photo),
+              backgroundColor: Colors.lightBlue[700],
+              foregroundColor: Colors.white,
+              label: 'Post Image',
+              onTap: () => debugPrint('SECOND CHILD'),
+            ),
+            SpeedDialChild(
+              child:const Icon(Icons.add_location),
+              backgroundColor: Colors.lightBlue[800],
+              foregroundColor: Colors.white,
+              label: 'Post Location',
+              onTap: () => debugPrint('SECOND CHILD'),
+            ),
+            SpeedDialChild(
+              child: const Icon(Icons.message),
+              backgroundColor: Colors.lightBlue[900],
+              foregroundColor: Colors.white,
+              label: 'Post Caption',
+
+              onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text(("Third Child Pressed")))),
+            ),
+
+          ],
+        ),
+      ),
       drawer: Drawer(
         // Add a ListView to the drawer. This ensures the user can scroll
         // through the options in the drawer if there isn't enough vertical

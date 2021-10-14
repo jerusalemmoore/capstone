@@ -50,9 +50,9 @@ class _MyHomePageState extends State<MyHomePage> {
   String? _retrieveDataError;
 
   final ImagePicker _picker = ImagePicker();
-  final TextEditingController maxWidthController = TextEditingController();
-  final TextEditingController maxHeightController = TextEditingController();
-  final TextEditingController qualityController = TextEditingController();
+  // final TextEditingController maxWidthController = TextEditingController();
+  // final TextEditingController maxHeightController = TextEditingController();
+  // final TextEditingController qualityController = TextEditingController();
 
   Future<void> _playVideo(XFile? file) async {
     if (file != null && mounted) {
@@ -85,45 +85,45 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     if (isVideo) {
       final XFile? file = await _picker.pickVideo(
-          source: source, maxDuration: const Duration(seconds: 10));
+          source: source);
       await _playVideo(file);
     } else if (isMultiImage) {
-      await _displayPickImageDialog(context!,
-              (double? maxWidth, double? maxHeight, int? quality) async {
-            try {
-              final pickedFileList = await _picker.pickMultiImage(
-                maxWidth: maxWidth,
-                maxHeight: maxHeight,
-                imageQuality: quality,
-              );
-              setState(() {
-                _imageFileList = pickedFileList;
-              });
-            } catch (e) {
-              setState(() {
-                _pickImageError = e;
-              });
-            }
-          });
+      // await _displayPickImageDialog(context!,
+      //         (double? maxWidth, double? maxHeight, int? quality) async {
+      //       try {
+      //         final pickedFileList = await _picker.pickMultiImage(
+      //           maxWidth: maxWidth,
+      //           maxHeight: maxHeight,
+      //           imageQuality: quality,
+      //         );
+      //         setState(() {
+      //           _imageFileList = pickedFileList;
+      //         });
+      //       } catch (e) {
+      //         setState(() {
+      //           _pickImageError = e;
+      //         });
+      //       }
+      //     });
     } else {
-      await _displayPickImageDialog(context!,
-              (double? maxWidth, double? maxHeight, int? quality) async {
-            try {
-              final pickedFile = await _picker.pickImage(
-                source: source,
-                maxWidth: maxWidth,
-                maxHeight: maxHeight,
-                imageQuality: quality,
-              );
-              setState(() {
-                _imageFile = pickedFile;
-              });
-            } catch (e) {
-              setState(() {
-                _pickImageError = e;
-              });
-            }
-          });
+      // await _displayPickImageDialog(context!,
+      //         (double? maxWidth, double? maxHeight, int? quality) async {
+      //       try {
+      //         final pickedFile = await _picker.pickImage(
+      //           source: source,
+      //           maxWidth: maxWidth,
+      //           maxHeight: maxHeight,
+      //           imageQuality: quality,
+      //         );
+      //         setState(() {
+      //           _imageFile = pickedFile;
+      //         });
+      //       } catch (e) {
+      //         setState(() {
+      //           _pickImageError = e;
+      //         });
+      //       }
+      //     });
     }
   }
 
@@ -139,9 +139,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void dispose() {
     _disposeVideoController();
-    maxWidthController.dispose();
-    maxHeightController.dispose();
-    qualityController.dispose();
+    // maxWidthController.dispose();
+    // maxHeightController.dispose();
+    // qualityController.dispose();
     super.dispose();
   }
 
@@ -164,6 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
         textAlign: TextAlign.center,
       );
     }
+    _controller!.play();
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: AspectRatioVideo(_controller),
@@ -353,62 +354,62 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     return null;
   }
-
-  Future<void> _displayPickImageDialog(
-      BuildContext context, OnPickImageCallback onPick) async {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text('Add optional parameters'),
-            content: Column(
-              children: <Widget>[
-                TextField(
-                  controller: maxWidthController,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  decoration:
-                  InputDecoration(hintText: "Enter maxWidth if desired"),
-                ),
-                TextField(
-                  controller: maxHeightController,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  decoration:
-                  InputDecoration(hintText: "Enter maxHeight if desired"),
-                ),
-                TextField(
-                  controller: qualityController,
-                  keyboardType: TextInputType.number,
-                  decoration:
-                  InputDecoration(hintText: "Enter quality if desired"),
-                ),
-              ],
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('CANCEL'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                  child: const Text('PICK'),
-                  onPressed: () {
-                    double? width = maxWidthController.text.isNotEmpty
-                        ? double.parse(maxWidthController.text)
-                        : null;
-                    double? height = maxHeightController.text.isNotEmpty
-                        ? double.parse(maxHeightController.text)
-                        : null;
-                    int? quality = qualityController.text.isNotEmpty
-                        ? int.parse(qualityController.text)
-                        : null;
-                    onPick(width, height, quality);
-                    Navigator.of(context).pop();
-                  }),
-            ],
-          );
-        });
-  }
+  //not required function
+  // Future<void> _displayPickImageDialog(
+  //     BuildContext context, OnPickImageCallback onPick) async {
+  //   return showDialog(
+  //       context: context,
+  //       builder: (context) {
+  //         return AlertDialog(
+  //           title: Text('Add optional parameters'),
+  //           content: Column(
+  //             children: <Widget>[
+  //               TextField(
+  //                 controller: maxWidthController,
+  //                 keyboardType: TextInputType.numberWithOptions(decimal: true),
+  //                 decoration:
+  //                 InputDecoration(hintText: "Enter maxWidth if desired"),
+  //               ),
+  //               TextField(
+  //                 controller: maxHeightController,
+  //                 keyboardType: TextInputType.numberWithOptions(decimal: true),
+  //                 decoration:
+  //                 InputDecoration(hintText: "Enter maxHeight if desired"),
+  //               ),
+  //               TextField(
+  //                 controller: qualityController,
+  //                 keyboardType: TextInputType.number,
+  //                 decoration:
+  //                 InputDecoration(hintText: "Enter quality if desired"),
+  //               ),
+  //             ],
+  //           ),
+  //           actions: <Widget>[
+  //             TextButton(
+  //               child: const Text('CANCEL'),
+  //               onPressed: () {
+  //                 Navigator.of(context).pop();
+  //               },
+  //             ),
+  //             TextButton(
+  //                 child: const Text('PICK'),
+  //                 onPressed: () {
+  //                   double? width = maxWidthController.text.isNotEmpty
+  //                       ? double.parse(maxWidthController.text)
+  //                       : null;
+  //                   double? height = maxHeightController.text.isNotEmpty
+  //                       ? double.parse(maxHeightController.text)
+  //                       : null;
+  //                   int? quality = qualityController.text.isNotEmpty
+  //                       ? int.parse(qualityController.text)
+  //                       : null;
+  //                   onPick(width, height, quality);
+  //                   Navigator.of(context).pop();
+  //                 }),
+  //           ],
+  //         );
+  //       });
+  // }
 }
 
 typedef void OnPickImageCallback(
@@ -452,11 +453,31 @@ class AspectRatioVideoState extends State<AspectRatioVideo> {
   @override
   Widget build(BuildContext context) {
     if (initialized) {
+      controller!.setLooping(true);
       return Center(
-        child: AspectRatio(
-          aspectRatio: controller!.value.aspectRatio,
-          child: VideoPlayer(controller!),
-        ),
+        child: Column(
+          children: <Widget>[
+            AspectRatio(
+              aspectRatio: controller!.value.aspectRatio,
+              child: VideoPlayer(controller!),
+            ),
+            TextButton(
+              child: Text("Play"),
+              onPressed: () =>
+                  setState(() {
+                    print("Hello");
+                    // If the video is playing, pause it.
+                    if (controller!.value.isPlaying) {
+                      print("isplaying");
+                      controller!.pause();
+                    } else {
+                      // If the video is paused, play it.
+                      controller!.play();
+                    }
+                  })
+            )
+          ]
+        )
       );
     } else {
       return Container();

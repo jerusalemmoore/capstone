@@ -107,7 +107,8 @@ class SignInFormState extends State<SignInForm> {
       print(e);
       return Future<bool>.value(false);
     }
-    return Future<bool>.value(true);
+    print("success");
+    return Future<bool>.value(false);
   }
 
   @override
@@ -156,6 +157,7 @@ class SignInFormState extends State<SignInForm> {
                 Padding(
                     padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
                     child: TextFormField(
+                      obscureText: true,
                       controller: passwordController,
                         onChanged: (text){
                         print("$password");
@@ -207,6 +209,7 @@ class SignInFormState extends State<SignInForm> {
                       }
                       bool success = await signInCreator();
                       if (success) {
+
                        FirebaseAuth.instance
                             .idTokenChanges()
                             .listen((User? user) {
