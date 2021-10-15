@@ -9,7 +9,7 @@
 //TODO: GEOLOCATION TO GET CURRENT LOCATION//widget built, add when logged into home page/explore
 //TODO: DISTANCE MATRIX TO GET DISTANCE BETWEEN CURRENT TO ADDRESS
 //TODO MAP WIDGET THAT GETS LOCATION POSTS
-
+//TODO TIME CONSTRAINTS FOR LOCATION POSTS WOULD BE HELPFUL
 //BUGS
     This keeps happening randomly causing ui to stop responding
     F/crash_dump32(24158): crash_dump.cpp:474] failed to attach to thread 161: Permission denied

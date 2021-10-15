@@ -1,14 +1,8 @@
 //simple implementation of geolocation widget for use on explore page and map
 import 'dart:async';
-import 'dart:math';
-import 'package:location/location.dart';
-import 'package:google_api_headers/google_api_headers.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_webservice/places.dart';
 import 'package:geolocator/geolocator.dart';
-//CURRENTLY WIDGET IS CALLED TESTWIDGET, MIGHT WANT TO CHANGE NAME TO GEOLOCATOR
 const kGoogleApiKey = "AIzaSyAnv3Mv89UoA9m4Jiw9jxeCyVoVDKg9M9w";
 
 class MapWidget extends StatefulWidget {
@@ -50,12 +44,13 @@ class MapWidgetState extends State<MapWidget> {
 
   @override
   void initState(){
-    loadPos();
+     loadPos();
     super.initState();
     // await _handlePermission();
     // currentPosition = await loadPos();
   }
   void dispose(){
+
     mapController.dispose();
     super.dispose();
   }
@@ -132,12 +127,15 @@ class MapWidgetState extends State<MapWidget> {
   Future<void> loadPos() async{
     bool permission = await _handlePermission();
     if(permission){
+      print("success loading pos");
        currentPosition = await Geolocator.getCurrentPosition();
-       _center = LatLng(currentPosition.latitude, currentPosition.longitude);
+       print("lat ${currentPosition.latitude}");
+      print("lat ${currentPosition.longitude}");
+      _center = LatLng(currentPosition.latitude, currentPosition.longitude);
 
     }
     else{
-
+      print("failure");
       return;
     }
   }

@@ -1,15 +1,8 @@
-//Form in order to register user to firebase auth and firestore with a creator account
-import 'homeWidgets/map.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:flutter/gestures.dart';
-import '../utilWidgets/placeSuggestionField.dart';
-
-
+import '../../utilWidgets/placeSuggestionField.dart';
 //registration form for a Creator
 //fields:
 //username
@@ -84,7 +77,7 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
   //Add extended creator credentials in doc where docId = email
   Future<bool> addCreator() async {
     CollectionReference creators =
-        FirebaseFirestore.instance.collection('creators');
+    FirebaseFirestore.instance.collection('creators');
     try{
 
       creators
@@ -171,14 +164,14 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                   text: 'Creator Registration',
                   style: GoogleFonts.abhayaLibre(
                       textStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontSize: 50,
-                  ))),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: 50,
+                      ))),
             ]
 
-                // style: TextStyle(fontFamily: 'RototoMono')
-                )),
+              // style: TextStyle(fontFamily: 'RototoMono')
+            )),
       ),
       Form(
           key: _formKey,
@@ -246,7 +239,7 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                 Padding(
                     padding: EdgeInsets.all(10),
                     child: TextFormField(
-                      obscureText: true,
+                        obscureText: true,
                         controller: passwordController,
                         onChanged: (text) {
                           print("Password: $text");
@@ -268,31 +261,31 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                 Padding(
                     padding: EdgeInsets.all(10),
                     child: PlaceSuggestionField(addressController)
-                    // TextFormField(
-                    //     controller: addressController,
-                    //     onChanged: (text) {
-                    //       print("Address: $text");
-                    //     },
-                    //     decoration: InputDecoration(
-                    //       fillColor: Colors.white,
-                    //       filled: true,
-                    //       border: OutlineInputBorder(),
-                    //       labelText: 'Address',
-                    //     ),
-                    //     //validators, isEmpty, is valid address
-                    //     validator: (value) {
-                    //       if (value == null || value.isEmpty) {
-                    //         return "Please enter valid address";
-                    //       }
-                    //       return null;
-                    //     })
+                  // TextFormField(
+                  //     controller: addressController,
+                  //     onChanged: (text) {
+                  //       print("Address: $text");
+                  //     },
+                  //     decoration: InputDecoration(
+                  //       fillColor: Colors.white,
+                  //       filled: true,
+                  //       border: OutlineInputBorder(),
+                  //       labelText: 'Address',
+                  //     ),
+                  //     //validators, isEmpty, is valid address
+                  //     validator: (value) {
+                  //       if (value == null || value.isEmpty) {
+                  //         return "Please enter valid address";
+                  //       }
+                  //       return null;
+                  //     })
                 ),
                 Padding(
                     padding: EdgeInsets.all(10),
                     child: ElevatedButton(
                       style: ButtonStyle(
                         foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.white),
+                        MaterialStateProperty.all<Color>(Colors.white),
                       ),
                       onPressed: () async {
                         //register button pressed
@@ -323,7 +316,7 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
 
                                 );
                                 Navigator.pushNamed(
-                                  context, 'userHome'
+                                    context, 'userHome'
                                 );
                                 //NAVIGATE TO HOME SCREEN WIDGET HERE
                               }
@@ -343,91 +336,5 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
             ),
           )),
     ]);
-  }
-}
-
-//page registration widget for signing up as a Creator
-class CreatorRegistrationPage extends StatefulWidget {
-  CreatorRegistrationPage({Key? key, required this.title}) : super(key: key);
-  final String title;
-
-  @override
-  _CreatorRegistrationPageState createState() =>
-      _CreatorRegistrationPageState();
-}
-
-class _CreatorRegistrationPageState extends State<CreatorRegistrationPage> {
-  var currentUser = FirebaseAuth.instance.currentUser;
-  CollectionReference creators =
-      FirebaseFirestore.instance.collection('creators');
-
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: NetworkImage(
-                      'https://i.pinimg.com/originals/1a/7a/0c/1a7a0cc45910acf9fac16b292c7034c7.jpg'),
-                  fit: BoxFit.cover),
-            ),
-            // Center is a layout widget. It takes a single child and positions it
-            // in the middle of the parent.
-            child: Center(
-                child: DraggableScrollableSheet(
-                  initialChildSize:1 ,
-                  expand: true,
-                  builder: (context, scrollController){
-                    return SingleChildScrollView(
-                      child: Column(
-                        // Column is also a layout widget. It takes a list of children and
-                        // arranges them vertically. By default, it sizes itself to fit its
-                        // children horizontally, and tries to be as tall as its parent.
-                        //
-                        // Invoke "debug painting" (press "p" in the console, choose the
-                        // "Toggle Debug Paint" action from the Flutter Inspector in Android
-                        // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-                        // to see the wireframe for each widget.
-                        //
-                        // Column has various properties to control how it sizes itself and
-                        // how it positions its children. Here we use mainAxisAlignment to
-                        // center the children vertically; the main axis here is the vertical
-                        // axis because Columns are vertical (the cross axis would be
-                        // horizontal).
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          CreatorRegistrationForm(),
-                          // FutureBuilder<DocumentSnapshot>(
-                          //   future: creators.doc(currentUser!.email).get(),
-                          //   builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot){
-                          //     if(snapshot.hasError){
-                          //       return Text('$snapshot.error');
-                          //     }
-                          //     if(snapshot.hasData && !snapshot.data!.exists){
-                          //       return Text("file doesn't exist");
-                          //
-                          //     }
-                          //     if(snapshot.connectionState == ConnectionState.done){
-                          //       Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-                          //       return Text("Full Name: ${data['email']} ${data['password']}");
-                          //     }
-                          //     return Text("loading");
-                          //   }
-                          // )
-
-                          // Text(
-                          //   'You have clicked the button this many times:',
-                          // ),
-                          // Text(
-                          //   '$_counter',
-                          //   style: Theme.of(context).textTheme.headline4,
-                          // ),
-                        ],
-                      ),
-                    );
-                  }
-                ))));
   }
 }

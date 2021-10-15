@@ -1,12 +1,7 @@
 //This widget provides user with choice of creating either a creator account or a patron account
 //Patron accounts are somewhat reduntant to creators and will therefore be a version 2 feature
-import 'homeWidgets/map.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/gestures.dart';
 
 class RegistrationPage extends StatefulWidget {
   RegistrationPage({Key? key, required this.title}) : super(key: key);
@@ -166,24 +161,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       'https://i.pinimg.com/originals/1a/7a/0c/1a7a0cc45910acf9fac16b292c7034c7.jpg'),
                   fit: BoxFit.cover),
             ),
-            // Center is a layout widget. It takes a single child and positions it
-            // in the middle of the parent.
             child: Center(
               child: Column(
-                // Column is also a layout widget. It takes a list of children and
-                // arranges them vertically. By default, it sizes itself to fit its
-                // children horizontally, and tries to be as tall as its parent.
-                //
-                // Invoke "debug painting" (press "p" in the console, choose the
-                // "Toggle Debug Paint" action from the Flutter Inspector in Android
-                // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-                // to see the wireframe for each widget.
-                //
-                // Column has various properties to control how it sizes itself and
-                // how it positions its children. Here we use mainAxisAlignment to
-                // center the children vertically; the main axis here is the vertical
-                // axis because Columns are vertical (the cross axis would be
-                // horizontal).
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   UserChoiceButtons()

@@ -17,48 +17,45 @@ class HomeMainWidgetState extends State<HomeMainWidget> {
     return Center(
         child: Column(
       children: <Widget>[
+        //user profile section
         Container(
-            color: Colors.lightBlue,
-            height: 200,
+
+            height: 150,
             width: MediaQuery.of(context).size.width,
             child: Column(children: [
               Row(children: [
                 Padding(
                   padding: EdgeInsets.fromLTRB(10, 20, 20, 0),
-                  child:
-                      CircleAvatar(backgroundColor: Colors.blue, radius: 50,
+                  child: CircleAvatar(
+                      backgroundColor: Colors.lightBlueAccent,
+                      foregroundColor: Colors.white,
+                      radius: 50,
                       child: Text('${widget.user.email[0].toUpperCase()}',
-                      style: TextStyle(fontSize: 30) ) ),
+                          style: TextStyle(fontSize: 30))),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(bottom:20),
-                  child: Text("${widget.user.email}",
-                      style: TextStyle(fontSize: 20, color:Colors.white))
-                )
+                Expanded(
+                    child: Padding(
+                        padding: EdgeInsets.only(bottom: 20),
+                        child: Text("${widget.user.email}",
+                            style:
+                                TextStyle(fontSize: 20, color: Colors.white))))
 
                 //     )
               ])
-            ])
-            // child: Row(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: <Widget> [
-            //     Expanded(
-            //       child: Column(
-            //     children: <Widget> [
-            //       CircleAvatar(
-            //           backgroundColor: Colors.white,
-            //           radius:40
-            //       )
-            //     ]
-            // )
-            //     ),
-            //     Expanded(
-            //       child: Text("${widget.user.email}")
-            //     )
-            //
-            //   ]
-            // )
+            ]),
+            decoration: BoxDecoration(
+                color: Colors.blue,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+
+                  blurRadius: 3,
+                  spreadRadius: 5
+                )
+              ]
             )
+        )
+        //put posted objects here
       ],
     ));
   }

@@ -1,28 +1,26 @@
-import 'package:capstone/pageWidgets/registerCreator.dart';
+import 'package:capstone/pageWidgets/registration/registerCreator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/gestures.dart';
-import 'Registration.dart';
-import 'home.dart';
-import 'homeWidgets/map.dart';
-import 'homeWidgets/homeMain.dart';
-import '../utilWidgets/geolocator.dart';
-import 'homeWidgets/explore.dart';
+import 'homeScaffold.dart';
+import 'homeMain.dart';
+import 'mapWidget.dart';
+import 'exploreWidget.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key, required this.title}) : super(key: key);
+import 'postWidgets/postPage.dart';
+class HomeScaffold extends StatefulWidget {
+  const HomeScaffold({Key? key, required this.title}) : super(key: key);
   final String title;
   @override
-  HomePageState createState(){
-    return HomePageState();
+  HomeScaffoldState createState(){
+    return HomeScaffoldState();
   }
 }
 
-class HomePageState extends State<HomePage>{
+class HomeScaffoldState extends State<HomeScaffold>{
   int screenIndex = 0;
   List<Widget>? widgetPages;
   var user;
@@ -72,21 +70,24 @@ class HomePageState extends State<HomePage>{
               backgroundColor: Colors.lightBlue[600],
               foregroundColor: Colors.white,
               label: 'Post Video',
-              onTap: () => debugPrint("FIRST CHILD"),
+              onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) =>PostPage(formType: 'video'))),
             ),
             SpeedDialChild(
               child:const Icon(Icons.add_a_photo),
               backgroundColor: Colors.lightBlue[700],
               foregroundColor: Colors.white,
               label: 'Post Image',
-              onTap: () => debugPrint('SECOND CHILD'),
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) =>PostPage(formType: 'image')))
             ),
             SpeedDialChild(
               child:const Icon(Icons.add_location),
               backgroundColor: Colors.lightBlue[800],
               foregroundColor: Colors.white,
               label: 'Post Location',
-              onTap: () => debugPrint('SECOND CHILD'),
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) =>PostPage(formType: 'location')))
             ),
             SpeedDialChild(
               child: const Icon(Icons.message),
@@ -94,8 +95,8 @@ class HomePageState extends State<HomePage>{
               foregroundColor: Colors.white,
               label: 'Post Caption',
 
-              onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text(("Third Child Pressed")))),
+              onTap: () =>Navigator.push(context,
+                  MaterialPageRoute(builder: (context) =>PostPage(formType: 'caption'))),
             ),
 
           ],
@@ -139,7 +140,9 @@ class HomePageState extends State<HomePage>{
         ),
       ),
       appBar: AppBar(
-
+        elevation: 0.0,
+        // backgroundColor: Colors.white,
+        // foregroundColor: Colors.black,
         title: Text(pageTitles[screenIndex]),
       ),
     body: Container(
@@ -180,7 +183,7 @@ class HomePageState extends State<HomePage>{
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.map),
-            label: 'School',
+            label: 'Activity Map',
           ),
         ],
           currentIndex: screenIndex,
