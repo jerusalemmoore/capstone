@@ -126,7 +126,7 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
     _isChecking = false;
     setState(() {});
   }
-
+  //register creator with firebase, return false on error
   Future<bool> registerCreator() async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
@@ -173,6 +173,7 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
               // style: TextStyle(fontFamily: 'RototoMono')
             )),
       ),
+      //registration form
       Form(
           key: _formKey,
           child: Container(

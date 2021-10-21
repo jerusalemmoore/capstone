@@ -71,7 +71,7 @@ class HomeScaffoldState extends State<HomeScaffold>{
               foregroundColor: Colors.white,
               label: 'Post Video',
               onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) =>PostPage(formType: 'video'))),
+              MaterialPageRoute(builder: (context) =>PostPage(formType: 'video', user: user))),
             ),
             SpeedDialChild(
               child:const Icon(Icons.add_a_photo),
@@ -79,7 +79,7 @@ class HomeScaffoldState extends State<HomeScaffold>{
               foregroundColor: Colors.white,
               label: 'Post Image',
               onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) =>PostPage(formType: 'image')))
+                  MaterialPageRoute(builder: (context) =>PostPage(formType: 'image', user:user)))
             ),
             SpeedDialChild(
               child:const Icon(Icons.add_location),
@@ -87,7 +87,7 @@ class HomeScaffoldState extends State<HomeScaffold>{
               foregroundColor: Colors.white,
               label: 'Post Location',
               onTap: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) =>PostPage(formType: 'location')))
+                  MaterialPageRoute(builder: (context) =>PostPage(formType: 'location', user:user)))
             ),
             SpeedDialChild(
               child: const Icon(Icons.message),
@@ -96,7 +96,7 @@ class HomeScaffoldState extends State<HomeScaffold>{
               label: 'Post Caption',
 
               onTap: () =>Navigator.push(context,
-                  MaterialPageRoute(builder: (context) =>PostPage(formType: 'caption'))),
+                  MaterialPageRoute(builder: (context) =>PostPage(formType: 'caption',user:user))),
             ),
 
           ],

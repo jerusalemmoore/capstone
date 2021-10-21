@@ -17,23 +17,26 @@ class PlaceSuggestionField extends StatefulWidget {
 class PlaceSuggestionFieldState extends State<PlaceSuggestionField> {
   String? apiKey = 'AIzaSyA8Xbu1XqgRojK9auDk7QDmsWB64HiuEyo';
   late GooglePlace googlePlace;
-  List<AutocompletePrediction> predictions = [];
+  List<AutocompletePrediction> predictions = [];//list to hold suggestions
   @override
   void initState() {
-    googlePlace = GooglePlace(apiKey!);
+    googlePlace = GooglePlace(apiKey!);//initialize google places with api key
     super.initState();
   }
 
+  //currently checks to make sure whatever is in form field is
+  //in the list of address suggestions
   bool addressVerified(String address) {
-    for(var i = 0; i < predictions.length; i++){
-      if(predictions[i].description == address){
+    for (var i = 0; i < predictions.length; i++) {
+      if (predictions[i].description == address) {
         return true;
       }
     }
     return false;
   }
+  //take value from input and add suggestions depending on value
   void autoCompleteSearch(String value) async {
-    print("nothing");
+    // print("nothing");
     var result = await googlePlace.autocomplete.get(value);
     if (result != null && result.predictions != null && mounted) {
       setState(() {
@@ -74,8 +77,7 @@ class PlaceSuggestionFieldState extends State<PlaceSuggestionField> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return "An Address is required";
-                      }
-                      else if(!addressVerified(value)){
+                      } else if (!addressVerified(value)) {
                         return "Please enter a valid Address";
                       }
                       return null;
@@ -116,88 +118,14 @@ class PlaceSuggestionFieldState extends State<PlaceSuggestionField> {
                               // });
                             },
                           ));
-                      //   ListTile(
-                      //   tileColor: Colors.white,
-                      //   leading: CircleAvatar(
-                      //     child: Icon(
-                      //       Icons.pin_drop,
-                      //       color: Colors.white,
-                      //     ),
-                      //   ),
-                      //   title: Text(predictions[index].description ?? "Nothing"),
-                      //   onTap: () {
-                      //     widget.addressController.text = predictions[index].description!;
-                      //   },
-                      // );
                     },
                   ),
                 )
-
-                // ),
-                // Container(
-                //   margin: EdgeInsets.only(top: 10, bottom: 10),
-                //   child: Image.asset("assets/powered_by_google.png"),
-                // ),
               ],
             ),
           ),
         ),
       ],
     );
-    // return  Column(
-    //   children: <Widget>[
-    //     TextField(
-    //       controller: widget.addressController,
-    //       decoration: InputDecoration(
-    //         labelText: "Search",
-    //         focusedBorder: OutlineInputBorder(
-    //           borderSide: BorderSide(
-    //             color: Colors.blue,
-    //             width: 2.0,
-    //           ),
-    //         ),
-    //         enabledBorder: OutlineInputBorder(
-    //           borderSide: BorderSide(
-    //             color: Colors.black54,
-    //             width: 2.0,
-    //           ),
-    //         ),
-    //       ),
-    //       onChanged: (value) {
-    //         if (value.isNotEmpty) {
-    //           autoCompleteSearch(value);
-    //         } else {
-    //           if (predictions.length > 0 && mounted) {
-    //             setState(() {
-    //               predictions = [];
-    //             });
-    //           }
-    //         }
-    //       },
-    //     ),
-    //     // SizedBox(
-    //     //   height: 10,
-    //     // ),
-    //     Expanded(
-    //       child: ListView.builder(
-    //         itemCount: predictions.length,
-    //         itemBuilder: (context, index) {
-    //           return ListTile(
-    //             leading: CircleAvatar(
-    //               child: Icon(
-    //                 Icons.pin_drop,
-    //                 color: Colors.white,
-    //               ),
-    //             ),
-    //             title: Text(predictions[index].description ?? "Nothing"),
-    //             onTap: () {
-    //               widget.addressController.text = predictions[index].description!;
-    //             },
-    //           );
-    //         },
-    //       ),
-    //     ),
-    //   ]
-    // );
   }
 }

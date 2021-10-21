@@ -21,6 +21,7 @@ class _CreatorRegistrationPageState extends State<CreatorRegistrationPage> {
   CollectionReference creators =
       FirebaseFirestore.instance.collection('creators');
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
@@ -43,31 +44,6 @@ class _CreatorRegistrationPageState extends State<CreatorRegistrationPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           CreatorRegistrationForm(),
-                          // FutureBuilder<DocumentSnapshot>(
-                          //   future: creators.doc(currentUser!.email).get(),
-                          //   builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot){
-                          //     if(snapshot.hasError){
-                          //       return Text('$snapshot.error');
-                          //     }
-                          //     if(snapshot.hasData && !snapshot.data!.exists){
-                          //       return Text("file doesn't exist");
-                          //
-                          //     }
-                          //     if(snapshot.connectionState == ConnectionState.done){
-                          //       Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-                          //       return Text("Full Name: ${data['email']} ${data['password']}");
-                          //     }
-                          //     return Text("loading");
-                          //   }
-                          // )
-
-                          // Text(
-                          //   'You have clicked the button this many times:',
-                          // ),
-                          // Text(
-                          //   '$_counter',
-                          //   style: Theme.of(context).textTheme.headline4,
-                          // ),
                         ],
                       ),
                     );

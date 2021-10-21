@@ -1,3 +1,4 @@
+import 'package:capstone/pageWidgets/homeWidgets/postWidgets/postsBuilder.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -48,15 +49,26 @@ class HomeMainWidgetState extends State<HomeMainWidget> {
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.5),
-
-                  blurRadius: 3,
+                    blurRadius: 3,
                   spreadRadius: 5
                 )
               ]
             )
+        ),
+        Expanded(
+          child:
+          DraggableScrollableSheet(
+              initialChildSize:1,
+              expand: true,
+              builder: (context, scrollController){
+                return PostsBuilder(user: widget.user);
+              }
+          ),
         )
+
         //put posted objects here
       ],
-    ));
+    )
+    );
   }
 }

@@ -1,9 +1,11 @@
+//Form implementation for signing user and verifying with firebase auth
 import 'package:capstone/pageWidgets/registration/registerCreator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/gestures.dart';
+
 class SignInForm extends StatefulWidget {
   const SignInForm({Key? key}) : super(key: key);
 
@@ -25,18 +27,19 @@ class SignInFormState extends State<SignInForm> {
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
   @override
-  void dispose(){
+  void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
-
   }
+
   @override
-  void initState(){
+  void initState() {
     emailController.addListener(setEmail);
     passwordController.addListener(setPassword);
     super.initState();
   }
+
   void setEmail() {
     email = emailController.text;
   }
@@ -44,6 +47,7 @@ class SignInFormState extends State<SignInForm> {
   void setPassword() {
     password = passwordController.text;
   }
+
   Future<bool> signInCreator() async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
@@ -71,17 +75,15 @@ class SignInFormState extends State<SignInForm> {
     return Column(children: <Widget>[
       RichText(
           text: TextSpan(children: [
-            TextSpan(
-                text: 'ARTSY',
-                style: GoogleFonts.abhayaLibre(
-                    textStyle: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontSize: 50,
-                    ))),
-          ]
-
-          )),
+        TextSpan(
+            text: 'ARTSY',
+            style: GoogleFonts.abhayaLibre(
+                textStyle: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              fontSize: 50,
+            ))),
+      ])),
       Form(
           key: _formKey,
           child: Container(
@@ -94,7 +96,7 @@ class SignInFormState extends State<SignInForm> {
                 Padding(
                     padding: EdgeInsets.all(10),
                     child: TextFormField(
-                        controller:emailController,
+                        controller: emailController,
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           filled: true,
@@ -112,7 +114,7 @@ class SignInFormState extends State<SignInForm> {
                     child: TextFormField(
                         obscureText: true,
                         controller: passwordController,
-                        onChanged: (text){
+                        onChanged: (text) {
                           print("$password");
                           print(text);
                         },
@@ -142,27 +144,25 @@ class SignInFormState extends State<SignInForm> {
                                   ..onTap = () {
                                     Navigator.pushNamed(
                                         context, 'registration');
-                                  }
-
-                              // print('Terms of Service"');
-                            ),
+                                  }),
                           ]),
                     )),
                 Padding(
                     padding: EdgeInsets.all(10),
                     child: ElevatedButton(
                       style: ButtonStyle(
-                        foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                        foregroundColor:
+                            MaterialStateProperty.all<Color>(Colors.white),
                       ),
                       onPressed: () async {
-                        if(_formKey.currentState!.validate()){
+                        if (_formKey.currentState!.validate()) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Processing Data')),
                           );
                         }
                         bool success = await signInCreator();
                         if (success) {
-
+                          //listen for user sign in
                           FirebaseAuth.instance
                               .idTokenChanges()
                               .listen((User? user) {
@@ -171,30 +171,31 @@ class SignInFormState extends State<SignInForm> {
                             } else {
                               print('User is signed in!');
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('User signing in')),
-
+                                const SnackBar(
+                                    content: Text('User signed in')),
                               );
-
                               //NAVIGATE TO HOME SCREEN WIDGET HERE
+                              Navigator.pushNamed(
+                                    context, 'userHome'
+                                );
+
                             }
                           });
-                          // addCreator();
                         } else {
+                          //there was an error signing in creator
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Error processing data')),
+                            const SnackBar(
+                                content: Text('Error processing data')),
                           );
                         }
                       },
                       child: Text('Login'),
-                    )
-                )
-
+                    ))
 
                 // Add TextFormFields and ElevatedButton here.
               ],
             ),
           )),
-
     ]);
   }
 }

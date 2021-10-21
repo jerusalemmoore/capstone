@@ -75,6 +75,7 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
   //INITIALIZE FIREBASE APPLICATION
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   //build State<MyHomePage>
   @override
@@ -86,19 +87,24 @@ class _LandingPageState extends State<LandingPage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     //FUTURE BUILDER OPENS SIGN IN PAGE WHEN FIREBASE IS INITIALIZED
+    //builder will navigate to user's home page if already signed in
     return FutureBuilder(
         future: _initialization,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            FirebaseAuth.instance
-                .idTokenChanges()
-                .listen((User? user) {
-              if (user != null) {
-                Navigator.pushNamed(
-                    context, 'userHome'
-                );
-              }});
+            // FirebaseAuth.instance
+            //     .idTokenChanges()
+            //     .listen((User? user) {
+            //       var localUser = user;
+            //   if (localUser != null) {
+            //     Navigator.pushNamed(
+            //         context, 'userHome'
+            //     );
+            //   }
+            //     }
+            //   );
             return Scaffold(
+              key: _scaffoldKey,
               appBar: AppBar(
                 // automaticallyImplyLeading: false,
                 // Here we take the value from the MyHomePage object that was created by

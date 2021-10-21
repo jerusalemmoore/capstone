@@ -166,13 +166,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   UserChoiceButtons()
-                  // Text(
-                  //   'You have clicked the button this many times:',
-                  // ),
-                  // Text(
-                  //   '$_counter',
-                  //   style: Theme.of(context).textTheme.headline4,
-                  // ),
                 ],
               ),
             )));

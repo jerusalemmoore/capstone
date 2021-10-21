@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
 import 'postForms/captionForm.dart';
+import 'postForms/locationForm.dart';
+import 'postForms/photoForm.dart';
+import 'postForms/videoForm.dart';
 class PostPage extends StatefulWidget {
-  const PostPage({Key? key, required this.formType}) : super(key: key);
+  const PostPage({Key? key, required this.formType,required this.user}) : super(key: key);
   final String formType;
+  final user;
   @override
   PostPageState createState(){
     return PostPageState();
@@ -28,22 +32,30 @@ class PostPageState extends State<PostPage> {
                 fit: BoxFit.cover),
           ),
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                ConditionalSwitch.single(
-                  context: context,
-                  valueBuilder: (BuildContext context) => widget.formType,
-                  caseBuilders: {
-                    'caption' : (BuildContext context) => CaptionForm(),
-                    'location' : (BuildContext context) => Text("location form"),
-                    'image' : (BuildContext context) => Text('image form'),
-                    'video' : (BuildContext context) => Text("video form")
-                  },
-                  fallbackBuilder: (BuildContext context) => Text("Error")
-                )
-              ],
-            ),
+            child: DraggableScrollableSheet(
+              initialChildSize:  1,
+                expand: true,
+              builder: (context, scrollController){
+                return SingleChildScrollView(
+                  child:Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      ConditionalSwitch.single(
+                          context: context,
+                          valueBuilder: (BuildContext context) => widget.formType,
+                          caseBuilders: {
+                            'caption' : (BuildContext context) => CaptionForm(user:widget.user),
+                            'location' : (BuildContext context) => LocationForm(user:widget.user),
+                            'image' : (BuildContext context) => ImageForm(user:widget.user),
+                            'video' : (BuildContext context) => VideoForm(user:widget.user),
+                          },
+                          fallbackBuilder: (BuildContext context) => Text("Error")
+                      )
+                    ],
+                  ),
+                );
+              }
+            )
           )),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
