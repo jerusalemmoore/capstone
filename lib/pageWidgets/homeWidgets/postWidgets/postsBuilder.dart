@@ -77,7 +77,13 @@ class PostsBuilderState extends State<PostsBuilder> {
 
       }
       else{
-        return CircularProgressIndicator();
+        return Column(
+          children: <Widget>[
+            Spacer(),
+            CircularProgressIndicator(),
+            Spacer()
+          ]
+        );
       }
     },
 

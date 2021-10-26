@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
-import 'postForms/captionForm.dart';
-import 'postForms/locationForm.dart';
-import 'postForms/photoForm.dart';
-import 'postForms/videoForm.dart';
+import 'postUploadForms/captionForm.dart';
+import 'postUploadForms/locationForm.dart';
+import 'postUploadForms/photoForm.dart';
+import 'postUploadForms/videoForm.dart';
 class PostPage extends StatefulWidget {
   const PostPage({Key? key, required this.formType,required this.user}) : super(key: key);
   final String formType;

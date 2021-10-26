@@ -189,7 +189,7 @@ class VideoFormState extends State<VideoForm> {
             textAlign: TextAlign.center,
             text: TextSpan(children: [
               TextSpan(
-                  text: 'Image Post',
+                  text: 'Video Post',
                   style: GoogleFonts.abhayaLibre(
                       textStyle: TextStyle(
                         fontWeight: FontWeight.bold,

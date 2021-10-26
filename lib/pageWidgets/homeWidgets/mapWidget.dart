@@ -128,9 +128,9 @@ class MapWidgetState extends State<MapWidget> {
     bool permission = await _handlePermission();
     if(permission){
       print("success loading pos");
-       currentPosition = await Geolocator.getCurrentPosition();
+       currentPosition = await Geolocator.getCurrentPosition(forceAndroidLocationManager: true);
        print("lat ${currentPosition.latitude}");
-      print("lat ${currentPosition.longitude}");
+      print("long ${currentPosition.longitude}");
       _center = LatLng(currentPosition.latitude, currentPosition.longitude);
 
     }

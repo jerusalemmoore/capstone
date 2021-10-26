@@ -33,6 +33,7 @@ class HomeScaffoldState extends State<HomeScaffold>{
       print("Error it doesn't seem a user is signed in");
       Navigator.pushNamedAndRemoveUntil(context, "landing", (r) => false);
     }
+
     widgetPages = <Widget>[
       HomeMainWidget(user:user),
       ExploreWidget(),

@@ -10,15 +10,21 @@
 //TODO: DISTANCE MATRIX TO GET DISTANCE BETWEEN CURRENT TO ADDRESS
 //TODO MAP WIDGET THAT GETS LOCATION POSTS
 //TODO TIME CONSTRAINTS FOR LOCATION POSTS WOULD BE HELPFUL
-//BUGS
+//AREAS OF CONCERN
     This keeps happening randomly causing ui to stop responding
-    F/crash_dump32(24158): crash_dump.cpp:474] failed to attach to thread 161: Permission denied
+    -F/crash_dump32(24158): crash_dump.cpp:474] failed to attach to thread 161: Permission denied
+
+    -this happens on logins and registration
+    Unhandled Exception: Looking up a deactivated widget's ancestor is unsafe.
+    E/flutter (23202): At this point the state of the widget's element tree is no longer stable.
+    E/flutter (23202): To safely refer to a widget's ancestor in its dispose() method, save a reference to the ancestor by calling dependOnInheritedWidgetOfExactType() in the widget's didChangeDependencies() method.
 
 //CURRENT
-    WORK ON SETTING UP IMAGE AND VIDEO POSTS ON HOME PAGE, THEN DEPLOY TO FIREBASE
+   -EDIT POST WIDGETS OF EACH TYPE TO PRESENT DATA AS EXPECTED
 //NEXT
-VALIDATORS FOR SIGN IN, LOCATION PINS, PRESENTATION ON EXPLORE PAGE
+    -WORK ON EXPLORE AND GEOLOCATION SO THAT NEAREST USERS ARE PRESENTED FIRST
 
 
 //SECURITY
 MIGHT WANT TO STORE INFO MORE PRIVATELY FOR APIS(DOTENV)
+CHANGED

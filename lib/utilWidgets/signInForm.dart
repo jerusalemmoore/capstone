@@ -65,7 +65,7 @@ class SignInFormState extends State<SignInForm> {
       print(e);
       return Future<bool>.value(false);
     }
-    print("success");
+    // print("success");
     return Future<bool>.value(false);
   }
 
@@ -175,8 +175,8 @@ class SignInFormState extends State<SignInForm> {
                                     content: Text('User signed in')),
                               );
                               //NAVIGATE TO HOME SCREEN WIDGET HERE
-                              Navigator.pushNamed(
-                                    context, 'userHome'
+                              Navigator.of(context).pushNamed(
+                                   'userHome'
                                 );
 
                             }

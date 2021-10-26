@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../utilWidgets/placeSuggestionField.dart';
+//look up formbloc plugin for implementing asynchronous validators
 //registration form for a Creator
 //fields:
 //username
@@ -26,11 +27,13 @@ class CreatorRegistrationForm extends StatefulWidget {
 // String address;
 class RegistrationFormState extends State<CreatorRegistrationForm> {
   dynamic _validationMsg;
+  var exists;
   bool _isChecking = false;
   var username;
   var email;
   var password;
   var address;
+  var userDoc;
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -80,7 +83,7 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
     FirebaseFirestore.instance.collection('creators');
     try{
 
-      creators
+      userDoc = creators
           .doc(email)
           .set({
         'email': email,
@@ -126,6 +129,38 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
     _isChecking = false;
     setState(() {});
   }
+  Future<bool> usernameExists() async{
+    var collection = await FirebaseFirestore.instance.collection('creators').
+    get()
+    .then((QuerySnapshot snapshot){
+      snapshot.docs.forEach((doc){
+        if(doc['username'] == username){
+          setState(() {
+            exists = true;
+          });
+
+        }
+        else{
+          setState((){
+            exists = false;
+          });
+        }
+    });
+    });
+    if(exists){
+      return Future<bool>.value(true);
+    }
+    else{
+      return Future<bool>.value(false);
+    }
+    // var doc = await collection.doc(email).get();
+    // if(doc.exists){
+    //   return true;
+    // }
+    // else {
+    //   return false;
+    // }
+  }
   //register creator with firebase, return false on error
   Future<bool> registerCreator() async {
     try {
@@ -150,6 +185,7 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
     }
     return Future<bool>.value(true);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +239,12 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                             labelText: 'Email',
                           ),
                           //validators, isEmpty, is valid email, is unique email
-                          validator: (value) => _validationMsg,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                                return "Email cannot be empty";
+                            }
+                            return _validationMsg;
+                          },
                           //   if (value == null || value.isEmpty) {
                           //     return "Please enter valid email";
                           //   }
@@ -226,15 +267,16 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                           fillColor: Colors.white,
                           filled: true,
                           border: OutlineInputBorder(),
-                          labelText: 'Username (optional)',
+                          labelText: 'Username',
                         ),
                         //validators, is unique
                         validator: (value) {
-                          // if (value == null || value.isEmpty) {
-                          //   //if empty, this is ok
-                          //   return "Please enter valid password";
-                          // }
-                          // return null;
+
+                          if (value == null || value.isEmpty) {
+                            //if empty, this is ok
+                            return "Username cannot be empty";
+                          }
+                          return null;
                         })),
                 //form field for password
                 Padding(
@@ -303,31 +345,41 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                           // print('password: $password');
                           // print('address: $address');
                           //attempt to register to firebase auth and firestore
-                          bool success = await registerCreator();
-                          if (success) {
-                            FirebaseAuth.instance
-                                .idTokenChanges()
-                                .listen((User? user) {
-                              if (user == null) {
-                                print('User is currently signed out!');
-                              } else {
-                                print('User is signed in!');
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('User signing in')),
-
-                                );
-                                Navigator.pushNamed(
-                                    context, 'userHome'
-                                );
-                                //NAVIGATE TO HOME SCREEN WIDGET HERE
-                              }
-                            });
-                            // addCreator();
-                          } else {
+                          bool exists = await usernameExists();
+                          if(exists){
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Error processing data')),
+                              const SnackBar(content: Text('Error, username is taken')),
                             );
+                          } else{
+                            bool success = await registerCreator();
+                            if (success) {
+                              FirebaseAuth.instance
+                                  .idTokenChanges()
+                                  .listen((User? user) {
+                                if (user == null) {
+                                  print('User is currently signed out!');
+                                } else {
+                                  print('User is signed in!');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('User signing in')),
+
+                                  );
+                                  Navigator.pushNamed(
+                                      context, 'userHome'
+                                  );
+                                  //NAVIGATE TO HOME SCREEN WIDGET HERE
+                                }
+                              });
+                              // addCreator();
+                            }
+
+                            else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Error processing data')),
+                              );
+                            }
                           }
+
                         }
                       },
                       child: Text('Register'),
