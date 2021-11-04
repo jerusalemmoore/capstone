@@ -1,22 +1,9 @@
-import 'map.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/gestures.dart';
-//TODO: YOU STILL NEED PASSWORD AND USERNAME TO VALIDATE FROM FIREBASE(SECONDARY)
-//TODO: YOU STILL NEED TO VALIDATE ADDRESS WITH GOOGLE PLACES(PRIMARY)
-//TODO: FINISH SIGN IN LOGIC AT SIGN IN SCREEN, SHOULD BE SIMILAR TO REGISTRATION(PRIMARY)
-//TODO: HOME PAGE NEEDS PROFILE PIC, USERNAME OR EMAIL DISPLAYED, SPACE FOR POSTS (PRIMARY)
-//TODO: HOME ALSO NEEDS AN ABOUT, CAN UPDATE WITH FORM(PRIMARY)
-//TODO: POST FUNCTIONS AND TIMELINE STORAGE(PRIMARY)
-//TODO: IMAGE PICKER WILL BE IMPORTANT FOR POSTS
-//TODO: POSTS SHOULD BE CREATED WITH FORM
-//TODO: GEOLOCATION TO GET CURRENT LOCATION
-//TODO: DISTANCE MATRIX TO GET DISTANCE BETWEEN CURRENT TO ADDRESS
-//TODO MAP WIDGET THAT GETS LOCATION POSTS
-
+import '../../utilWidgets/placeSuggestionField.dart';
+//look up formbloc plugin for implementing asynchronous validators
 //registration form for a Creator
 //fields:
 //username
@@ -40,11 +27,13 @@ class CreatorRegistrationForm extends StatefulWidget {
 // String address;
 class RegistrationFormState extends State<CreatorRegistrationForm> {
   dynamic _validationMsg;
+  bool exists = false;
   bool _isChecking = false;
   var username;
   var email;
   var password;
   var address;
+  var userDoc;
   final usernameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -62,11 +51,13 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
   final _formKey = GlobalKey<FormState>();
   @override
   void initState() {
-    super.initState();
+
     usernameController.addListener(setUsername);
     emailController.addListener(setEmail);
     passwordController.addListener(setPassword);
     addressController.addListener(setAddress);
+    super.initState();
+
   }
 
   //SET METHODS
@@ -90,10 +81,10 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
   //Add extended creator credentials in doc where docId = email
   Future<bool> addCreator() async {
     CollectionReference creators =
-        FirebaseFirestore.instance.collection('creators');
+    FirebaseFirestore.instance.collection('creators');
     try{
 
-      creators
+      userDoc = creators
           .doc(email)
           .set({
         'email': email,
@@ -139,7 +130,39 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
     _isChecking = false;
     setState(() {});
   }
+  Future<bool> usernameExists() async{
+    var collection = await FirebaseFirestore.instance.collection('creators').
+    get()
+    .then((QuerySnapshot snapshot){
+      snapshot.docs.forEach((doc){
+        if(doc['username'] == username){
+          setState(() {
+            exists = true;
+          });
 
+        }
+        else{
+          setState((){
+            exists = false;
+          });
+        }
+    });
+    });
+    if(exists){
+      return Future<bool>.value(true);
+    }
+    else{
+      return Future<bool>.value(false);
+    }
+    // var doc = await collection.doc(email).get();
+    // if(doc.exists){
+    //   return true;
+    // }
+    // else {
+    //   return false;
+    // }
+  }
+  //register creator with firebase, return false on error
   Future<bool> registerCreator() async {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
@@ -164,11 +187,11 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
     return Future<bool>.value(true);
   }
 
+
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: <
-        Widget>[
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
       Padding(
         padding: EdgeInsets.only(top: 20),
         child: RichText(
@@ -178,15 +201,16 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                   text: 'Creator Registration',
                   style: GoogleFonts.abhayaLibre(
                       textStyle: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    fontSize: 50,
-                  ))),
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: 50,
+                      ))),
             ]
 
-                // style: TextStyle(fontFamily: 'RototoMono')
-                )),
+              // style: TextStyle(fontFamily: 'RototoMono')
+            )),
       ),
+      //registration form
       Form(
           key: _formKey,
           child: Container(
@@ -216,7 +240,12 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                             labelText: 'Email',
                           ),
                           //validators, isEmpty, is valid email, is unique email
-                          validator: (value) => _validationMsg,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                                return "Email cannot be empty";
+                            }
+                            return _validationMsg;
+                          },
                           //   if (value == null || value.isEmpty) {
                           //     return "Please enter valid email";
                           //   }
@@ -239,20 +268,22 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                           fillColor: Colors.white,
                           filled: true,
                           border: OutlineInputBorder(),
-                          labelText: 'Username (optional)',
+                          labelText: 'Username',
                         ),
                         //validators, is unique
                         validator: (value) {
-                          // if (value == null || value.isEmpty) {
-                          //   //if empty, this is ok
-                          //   return "Please enter valid password";
-                          // }
-                          // return null;
+
+                          if (value == null || value.isEmpty) {
+                            //if empty, this is ok
+                            return "Username cannot be empty";
+                          }
+                          return null;
                         })),
                 //form field for password
                 Padding(
                     padding: EdgeInsets.all(10),
                     child: TextFormField(
+                        obscureText: true,
                         controller: passwordController,
                         onChanged: (text) {
                           print("Password: $text");
@@ -273,30 +304,32 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                 //form field for address
                 Padding(
                     padding: EdgeInsets.all(10),
-                    child: TextFormField(
-                        controller: addressController,
-                        onChanged: (text) {
-                          print("Address: $text");
-                        },
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(),
-                          labelText: 'Address',
-                        ),
-                        //validators, isEmpty, is valid address
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter valid address";
-                          }
-                          return null;
-                        })),
+                    child: PlaceSuggestionField(addressController)
+                  // TextFormField(
+                  //     controller: addressController,
+                  //     onChanged: (text) {
+                  //       print("Address: $text");
+                  //     },
+                  //     decoration: InputDecoration(
+                  //       fillColor: Colors.white,
+                  //       filled: true,
+                  //       border: OutlineInputBorder(),
+                  //       labelText: 'Address',
+                  //     ),
+                  //     //validators, isEmpty, is valid address
+                  //     validator: (value) {
+                  //       if (value == null || value.isEmpty) {
+                  //         return "Please enter valid address";
+                  //       }
+                  //       return null;
+                  //     })
+                ),
                 Padding(
                     padding: EdgeInsets.all(10),
                     child: ElevatedButton(
                       style: ButtonStyle(
                         foregroundColor:
-                            MaterialStateProperty.all<Color>(Colors.white),
+                        MaterialStateProperty.all<Color>(Colors.white),
                       ),
                       onPressed: () async {
                         //register button pressed
@@ -313,27 +346,41 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
                           // print('password: $password');
                           // print('address: $address');
                           //attempt to register to firebase auth and firestore
-                          bool success = await registerCreator();
-                          if (success) {
-                            FirebaseAuth.instance
-                                .idTokenChanges()
-                                .listen((User? user) {
-                              if (user == null) {
-                                print('User is currently signed out!');
-                              } else {
-                                print('User is signed in!');
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('User signing in')),
-                                );
-                                //NAVIGATE TO HOME SCREEN WIDGET HERE
-                              }
-                            });
-                            // addCreator();
-                          } else {
+                          bool exists = await usernameExists();
+                          if(exists){
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Error processing data')),
+                              const SnackBar(content: Text('Error, username is taken')),
                             );
+                          } else{
+                            bool success = await registerCreator();
+                            if (success) {
+                              FirebaseAuth.instance
+                                  .idTokenChanges()
+                                  .listen((User? user) {
+                                if (user == null) {
+                                  print('User is currently signed out!');
+                                } else {
+                                  print('User is signed in!');
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('User signing in')),
+
+                                  );
+                                  Navigator.pushNamed(
+                                      context, 'userHome'
+                                  );
+                                  //NAVIGATE TO HOME SCREEN WIDGET HERE
+                                }
+                              });
+                              // addCreator();
+                            }
+
+                            else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Error processing data')),
+                              );
+                            }
                           }
+
                         }
                       },
                       child: Text('Register'),
@@ -343,85 +390,5 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
             ),
           )),
     ]);
-  }
-}
-
-//page registration widget for signing up as a Creator
-class CreatorRegistrationPage extends StatefulWidget {
-  CreatorRegistrationPage({Key? key, required this.title}) : super(key: key);
-  final String title;
-
-  @override
-  _CreatorRegistrationPageState createState() =>
-      _CreatorRegistrationPageState();
-}
-
-class _CreatorRegistrationPageState extends State<CreatorRegistrationPage> {
-  var currentUser = FirebaseAuth.instance.currentUser;
-  CollectionReference creators =
-      FirebaseFirestore.instance.collection('creators');
-
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: NetworkImage(
-                      'https://i.pinimg.com/originals/1a/7a/0c/1a7a0cc45910acf9fac16b292c7034c7.jpg'),
-                  fit: BoxFit.cover),
-            ),
-            // Center is a layout widget. It takes a single child and positions it
-            // in the middle of the parent.
-            child: Center(
-                child: SingleChildScrollView(
-              child: Column(
-                // Column is also a layout widget. It takes a list of children and
-                // arranges them vertically. By default, it sizes itself to fit its
-                // children horizontally, and tries to be as tall as its parent.
-                //
-                // Invoke "debug painting" (press "p" in the console, choose the
-                // "Toggle Debug Paint" action from the Flutter Inspector in Android
-                // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-                // to see the wireframe for each widget.
-                //
-                // Column has various properties to control how it sizes itself and
-                // how it positions its children. Here we use mainAxisAlignment to
-                // center the children vertically; the main axis here is the vertical
-                // axis because Columns are vertical (the cross axis would be
-                // horizontal).
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  CreatorRegistrationForm(),
-                  // FutureBuilder<DocumentSnapshot>(
-                  //   future: creators.doc(currentUser!.email).get(),
-                  //   builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot){
-                  //     if(snapshot.hasError){
-                  //       return Text('$snapshot.error');
-                  //     }
-                  //     if(snapshot.hasData && !snapshot.data!.exists){
-                  //       return Text("file doesn't exist");
-                  //
-                  //     }
-                  //     if(snapshot.connectionState == ConnectionState.done){
-                  //       Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-                  //       return Text("Full Name: ${data['email']} ${data['password']}");
-                  //     }
-                  //     return Text("loading");
-                  //   }
-                  // )
-
-                  // Text(
-                  //   'You have clicked the button this many times:',
-                  // ),
-                  // Text(
-                  //   '$_counter',
-                  //   style: Theme.of(context).textTheme.headline4,
-                  // ),
-                ],
-              ),
-            ))));
   }
 }

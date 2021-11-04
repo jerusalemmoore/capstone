@@ -1,12 +1,13 @@
-
-import 'package:capstone/registerCreator.dart';
+//Capstone Project (Artsy) application entry point
+import 'package:capstone/pageWidgets/registration/registerCreator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/gestures.dart';
-import 'Registration.dart';
+import 'registration/registrationStart.dart';
+import 'homeWidgets/homeScaffold.dart';
+import '../utilWidgets/signInForm.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Flutter Demo',
+        darkTheme: ThemeData.dark(),
         theme: ThemeData(
           // This is the theme of your application.
           //
@@ -32,14 +34,16 @@ class MyApp extends StatelessWidget {
           // or simply save your changes to "hot reload" in a Flutter IDE).
           // Notice that the counter didn't reset back to zero; the application
           // is not restarted.
-          primarySwatch: Colors.blue,
-          accentColor: Colors.lightBlueAccent,
+          colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue)
+              .copyWith(secondary: Colors.lightBlueAccent),
         ),
-        initialRoute: 'home',
+        initialRoute: 'landing',
         routes: {
-          'home': (context) => MyHomePage(title: 'Landing Page'),
+          'landing': (context) => LandingPage(title: 'Landing Page'),
           'registration': (context) => RegistrationPage(title: "Registration"),
-          'creatorRegistration': (context) => CreatorRegistrationPage(title: "New Creator")
+          'creatorRegistration': (context) =>
+              CreatorRegistrationPage(title: "New Creator"),
+          'userHome': (context) => HomeScaffold(title: 'Home')
         });
   }
 }
@@ -50,124 +54,10 @@ class MyApp extends StatelessWidget {
 //used to get user credentials
 //if valid credentials, log user
 //reject credentials otherwise
-class SignInForm extends StatefulWidget {
-  const SignInForm({Key? key}) : super(key: key);
-
-  @override
-  SignInFormState createState() {
-    return SignInFormState();
-  }
-}
-
-class SignInFormState extends State<SignInForm> {
-  // Create a global key that uniquely identifies the Form widget
-  // and allows validation of the form.
-  //
-  // Note: This is a `GlobalKey<FormState>`,
-  // not a GlobalKey<MyCustomFormState>.
-  final _formKey = GlobalKey<FormState>();
-
-  @override
-  Widget build(BuildContext context) {
-    // Build a Form widget using the _formKey created above.
-    return Column(children: <Widget>[
-      RichText(
-          text: TextSpan(children: [
-        TextSpan(
-            text: 'ARTSY',
-            style: GoogleFonts.abhayaLibre(
-                textStyle: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontSize: 50,
-            ))),
-      ]
-
-              // style: TextStyle(fontFamily: 'RototoMono')
-              )),
-      Form(
-          key: _formKey,
-          child: Container(
-            padding: EdgeInsets.all(40),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(200),
-            ),
-            child: Column(
-              children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.all(10),
-                    child: TextFormField(
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(),
-                          labelText: 'User name',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter username";
-                          }
-                          return null;
-                        })),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-                    child: TextFormField(
-                        decoration: InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          border: OutlineInputBorder(),
-                          labelText: 'Password',
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter username";
-                          }
-                          return null;
-                        })),
-                Padding(
-                    padding: EdgeInsets.all(5),
-                    child: RichText(
-                      text: TextSpan(
-                          style: DefaultTextStyle.of(context).style,
-                          children: <TextSpan>[
-                            TextSpan(text: "Don't have an account? Register "),
-                            TextSpan(
-                                style: TextStyle(color: Colors.pink),
-                                text: "here",
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    Navigator.pushNamed(
-                                        context, 'registration');
-                                  }
-
-                                // print('Terms of Service"');
-                                ),
-                          ]),
-                    )),
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                    ),
-                    onPressed: () { },
-                    child: Text('Login'),
-                  )
-                )
-
-
-                // Add TextFormFields and ElevatedButton here.
-              ],
-            ),
-          )),
-
-    ]);
-  }
-}
 
 //SIGN IN PAGE
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+class LandingPage extends StatefulWidget {
+  LandingPage({Key? key, required this.title}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -181,12 +71,13 @@ class MyHomePage extends StatefulWidget {
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _LandingPageState createState() => _LandingPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _LandingPageState extends State<LandingPage> {
   //INITIALIZE FIREBASE APPLICATION
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   //build State<MyHomePage>
   @override
@@ -198,12 +89,26 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     //FUTURE BUILDER OPENS SIGN IN PAGE WHEN FIREBASE IS INITIALIZED
+    //builder will navigate to user's home page if already signed in
     return FutureBuilder(
         future: _initialization,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
+            // FirebaseAuth.instance
+            //     .idTokenChanges()
+            //     .listen((User? user) {
+            //       var localUser = user;
+            //   if (localUser != null) {
+            //     Navigator.pushNamed(
+            //         context, 'userHome'
+            //     );
+            //   }
+            //     }
+            //   );
             return Scaffold(
+              key: _scaffoldKey,
               appBar: AppBar(
+                // automaticallyImplyLeading: false,
                 // Here we take the value from the MyHomePage object that was created by
                 // the App.build method, and use it to set our appbar title.
                 title: Text(widget.title),
