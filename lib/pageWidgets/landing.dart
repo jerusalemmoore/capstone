@@ -78,7 +78,14 @@ class _LandingPageState extends State<LandingPage> {
   //INITIALIZE FIREBASE APPLICATION
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  @override
+  initState(){
 
+    super.initState();
+  }
+  void _signin(stream) {
+
+  }
   //build State<MyHomePage>
   @override
   Widget build(BuildContext context) {
@@ -94,17 +101,17 @@ class _LandingPageState extends State<LandingPage> {
         future: _initialization,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            // FirebaseAuth.instance
-            //     .idTokenChanges()
-            //     .listen((User? user) {
-            //       var localUser = user;
-            //   if (localUser != null) {
-            //     Navigator.pushNamed(
-            //         context, 'userHome'
-            //     );
-            //   }
-            //     }
-            //   );
+            FirebaseAuth.instance
+                .authStateChanges()
+                .listen((User? user) {
+              if (user == null) {
+                print('User is currently signed out!');
+              } else {
+                Navigator.of(context).pushNamed(
+                     'userHome'
+                  );
+              }
+            });
             return Scaffold(
               key: _scaffoldKey,
               appBar: AppBar(
@@ -114,6 +121,7 @@ class _LandingPageState extends State<LandingPage> {
                 title: Text(widget.title),
               ),
               body: Container(
+                constraints: BoxConstraints.expand(),
                   decoration: BoxDecoration(
                     image: DecorationImage(
                         image: NetworkImage(

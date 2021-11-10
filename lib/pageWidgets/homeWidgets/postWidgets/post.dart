@@ -5,7 +5,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:better_player/better_player.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+
 var meterToMileConversion = .000621371;
 
 class CaptionPost extends StatefulWidget {
@@ -43,36 +46,133 @@ class CaptionPostState extends State<CaptionPost> {
         margin: const EdgeInsets.all(15.0),
         // padding: const EdgeInsets.all(3.0),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: Colors.white,
-            border: Border.all(color: Colors.blueAccent)),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: Colors.blue,
+          border: Border.all(color: Colors.black),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 5,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],),
         child: Column(children: [
           LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
             return Container(
               decoration: BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(8))),
+                border: Border(
+                  bottom: BorderSide(color:Colors.black)
+                )
+              ),
               width: constraints.maxWidth,
-              child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Align(
+                child:Padding(
+                    padding: EdgeInsets.all(10),
+
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Align(
                             alignment: Alignment.topLeft,
-                            child: Text('${widget.username}')),
-                        Align(
+                            // child: Text('${widget.username}', style: TextStyle(color: Colors.white))
+                            child: RichText(
+                                text: TextSpan(
+                                    style: GoogleFonts.abhayaLibre(
+                                        textStyle: TextStyle(
+                                          // fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 25,
+                                        )),
+                                    children: [
+                                      TextSpan(
+                                        text: '${widget.username}',
+                                      ),
+                                    ])),
+                          ),
+
+                          Align(
                             alignment: Alignment.topRight,
-                            child: Text('$formattedDate'))
-                      ])),
+                            // child: Text('$formattedDate', style:TextStyle(color:Colors.white))
+                            child: RichText(
+                                text: TextSpan(children: [
+                                  TextSpan(
+                                      text: '$formattedDate',
+                                      style: GoogleFonts.abhayaLibre(
+                                          textStyle: TextStyle(
+                                            // fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                          ))),
+                                ])),
+                          ),
+                        ]
+
+                    )
+                ),
+
             );
           }),
-          Text(widget.caption),
-          if(widget.distFromUser != null)
-            Text("${(widget.distFromUser * meterToMileConversion).toStringAsFixed(2)} miles")
+         LayoutBuilder(
+           builder: (BuildContext context, BoxConstraints constraints){
+             return Container(
+               decoration: BoxDecoration(
+                 borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                 color: Colors.white,
+                 // border: Border(
+                 //   top: BorderSide(color:Colors.black)
+                 // )
+               ),
+               width: constraints.maxWidth,
+               child:Column(
+                 children: [
+                   Align(
+                     alignment: Alignment.centerLeft,
+                     child:  Padding(padding: EdgeInsets.all(15),
+                         // child:  Text(widget.caption, style: TextStyle(color: Colors.white)),
+                         child:RichText(
+                             text: TextSpan(children: [
+                               TextSpan(
+                                   text: '${widget.caption}',
+                                   style: GoogleFonts.abhayaLibre(
+                                       textStyle: TextStyle(
+                                         // fontWeight: FontWeight.bold,
+                                         color: Colors.black,
+                                         fontSize: 17,
+                                       ))),
+                             ]))
+                     ),
+                   ),
+                   if(widget.distFromUser != null)
+                   Align(
+                       alignment: Alignment.bottomRight,
+                     child: Padding(
+                       padding: EdgeInsets.all(10),
+                         // child: Text("${(widget.distFromUser * meterToMileConversion).toStringAsFixed(2)} miles")
+                       child:RichText(
+                           text: TextSpan(children: [
+                             TextSpan(
+                                 text: '${(widget.distFromUser * meterToMileConversion).toStringAsFixed(2)} miles',
+                                 style: GoogleFonts.abhayaLibre(
+                                     textStyle: TextStyle(
+                                       fontStyle: FontStyle.italic,
+                                       // fontWeight: FontWeight.bold,
+                                       color: Colors.black,
+                                       fontSize: 13,
+                                     ))),
+                           ]))
+                     )
+
+                   )
+
+
+                 ],
+               ),
+             );
+           }
+         ),
+
+
         ]));
   }
 }
@@ -112,41 +212,156 @@ class LocationPostState extends State<LocationPost> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        margin: const EdgeInsets.all(15.0),
-        // padding: const EdgeInsets.all(3.0),
-        decoration: BoxDecoration(
+          margin: const EdgeInsets.all(15.0),
+          // padding: const EdgeInsets.all(3.0),
+          decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: Colors.white,
-            border: Border.all(color: Colors.blueAccent)),
-        child: Column(children: [
-          LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-            return Container(
-              decoration: BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(8))),
-              width: constraints.maxWidth,
-              child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Align(
-                            alignment: Alignment.topLeft,
-                            child: Text('${widget.username}')),
-                        Align(
-                            alignment: Alignment.topRight,
-                            child: Text('$formattedDate'))
-                      ])),
-            );
-          }),
-          Text(widget.location),
-          Text(widget.caption),
-          if(widget.distFromUser != null)
-            Text("${(widget.distFromUser * meterToMileConversion).toStringAsFixed(2)} miles")
-        ]));
+            color: Colors.blue,
+            border: Border.all(color: Colors.black),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 5,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ],),
+
+          child: Column(children: [
+            LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return Container(
+                    width: constraints.maxWidth,
+                    child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Align(
+                                  alignment: Alignment.topLeft,
+                                  // child: Text('${widget.username}', style: TextStyle(color: Colors.white))
+                                  child: RichText(
+                                      text: TextSpan(children: [
+                                        TextSpan(
+                                            text: '${widget.username}',
+                                            style: GoogleFonts.abhayaLibre(
+                                                textStyle: TextStyle(
+                                                  // fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
+                                                  fontSize: 25,
+                                                ))),
+                                      ])),
+                                ),
+                              Align(
+                                  alignment: Alignment.topRight,
+                                  // child: Text('$formattedDate', style:TextStyle(color:Colors.white))
+                                child: RichText(
+                                    text: TextSpan(children: [
+                                      TextSpan(
+                                          text: '$formattedDate',
+                                          style: GoogleFonts.abhayaLibre(
+                                              textStyle: TextStyle(
+                                                // fontWeight: FontWeight.bold,
+                                                color: Colors.white,
+                                                fontSize: 15,
+                                              ))),
+                                    ])),
+                              )
+                            ])),
+                  );
+                }),
+            LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return
+
+                    Container(
+                        decoration:BoxDecoration(
+                          boxShadow: [
+                            // BoxShadow(
+                            //   color: Colors.grey
+                            // ),
+                            // BoxShadow(
+                            //   color: Colors.grey,
+                            //   spreadRadius:  -12,
+                            //   blurRadius: 12.0
+                            // )
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.5),
+                              spreadRadius: -5,
+                              blurRadius: 5,
+                              // offset: Offset(0, -3), // changes position of shadow
+                            ),
+                          ],
+                            color: Colors.white,
+                            border: Border(
+                              top: BorderSide(color: Colors.black),
+                              bottom: BorderSide(color: Colors.black),
+                            )
+                        ),
+                        width: constraints.maxWidth,
+
+                        child:
+                        Padding(
+                          padding: EdgeInsets.all(20),
+                          // child: Text(widget.location),
+                           child: RichText(
+                                text: TextSpan(children: [
+                                  TextSpan(
+                                      text: '${widget.location}',
+                                      style: GoogleFonts.abhayaLibre(
+                                          textStyle: TextStyle(
+                                            // fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontSize: 25,
+                                          ))),
+                                ]))
+                        )
+                    );
+                }
+            ),
+
+            Align(
+              alignment: Alignment.centerLeft,
+              child:  Padding(padding: EdgeInsets.all(15),
+                // child:  Text(widget.caption, style: TextStyle(color: Colors.white)),
+                  child:RichText(
+                      text: TextSpan(children: [
+                        TextSpan(
+                            text: '${widget.caption}',
+                            style: GoogleFonts.abhayaLibre(
+                                textStyle: TextStyle(
+                                  // fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontSize: 17,
+                                ))),
+                      ]))
+              ),
+            ),
+            if(widget.distFromUser != null)
+              Align(
+                  alignment: Alignment.bottomRight,
+                  child: Padding(
+                      padding: EdgeInsets.all(10),
+                      // child: Text("${(widget.distFromUser * meterToMileConversion).toStringAsFixed(2)} miles")
+                      child:RichText(
+                          text: TextSpan(children: [
+                            TextSpan(
+                                text: '${(widget.distFromUser * meterToMileConversion).toStringAsFixed(2)} miles',
+                                style: GoogleFonts.abhayaLibre(
+                                    textStyle: TextStyle(
+                                      fontStyle: FontStyle.italic,
+                                      // fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                    ))),
+                          ]))
+                  )
+
+              )
+
+
+          ]));
+
   }
 }
 
@@ -210,49 +425,155 @@ class ImagePostState extends State<ImagePost> {
         margin: const EdgeInsets.all(15.0),
         // padding: const EdgeInsets.all(3.0),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: Colors.white,
-            border: Border.all(color: Colors.blueAccent)),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: Colors.blue,
+          border: Border.all(color: Colors.black),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 5,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],),
         child: Column(children: [
           LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
             return Container(
-              decoration: BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(8))),
-              width: constraints.maxWidth,
-              child: Padding(
+              child:Padding(
                   padding: EdgeInsets.all(10),
                   child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         Align(
-                            alignment: Alignment.topLeft,
-                            child: Text('${widget.username}')),
+                          alignment: Alignment.topLeft,
+                          // child: Text('${widget.username}', style: TextStyle(color: Colors.white))
+                          child: RichText(
+                              text: TextSpan(children: [
+                                TextSpan(
+                                    text: '${widget.username}',
+                                    style: GoogleFonts.abhayaLibre(
+                                        textStyle: TextStyle(
+                                          // fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 25,
+                                        ))),
+                              ])),
+                        ),
                         Align(
-                            alignment: Alignment.topRight,
-                            child: Text('$formattedDate'))
+                          alignment: Alignment.topRight,
+                          // child: Text('$formattedDate', style:TextStyle(color:Colors.white))
+                          child: RichText(
+                              text: TextSpan(children: [
+                                TextSpan(
+                                    text: '$formattedDate',
+                                    style: GoogleFonts.abhayaLibre(
+                                        textStyle: TextStyle(
+                                          // fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ))),
+                              ])),
+                        )
                       ])),
+              width: constraints.maxWidth,
+              // child: Padding(
+              //     padding: EdgeInsets.all(10),
+              //     child: Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: <Widget>[
+              //           Align(
+              //               alignment: Alignment.topLeft,
+              //               child: Text('${widget.username}')),
+              //           Align(
+              //               alignment: Alignment.topRight,
+              //               child: Text('$formattedDate'))
+              //         ])),
             );
           }),
           FutureBuilder(
               future: getDownloadUrl(),
               builder: (BuildContext context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  return AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: image,
+                  return  LayoutBuilder(
+                      builder: (BuildContext context, BoxConstraints constraints){
+                        return Container(
+                            decoration:BoxDecoration(
+                                boxShadow: [
+                                  // BoxShadow(
+                                  //   color: Colors.grey
+                                  // ),
+                                  // BoxShadow(
+                                  //   color: Colors.grey,
+                                  //   spreadRadius:  -12,
+                                  //   blurRadius: 12.0
+                                  // )
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.5),
+                                    spreadRadius: -5,
+                                    blurRadius: 5,
+                                    // offset: Offset(0, -3), // changes position of shadow
+                                  ),
+                                ],
+                                color: Colors.white,
+                                border: Border(
+                                  top: BorderSide(color: Colors.black),
+                                  bottom: BorderSide(color: Colors.black),
+                                )
+                            ),
+                            width: constraints.maxWidth,
+
+                            child:
+                            AspectRatio(
+                              aspectRatio: 16 / 9,
+                              child: image,
+                            )
+                        );
+                      }
                   );
                 } else {
                   return CircularProgressIndicator();
                 }
               }),
           // Text(widget.imagePath),
-          Text(widget.caption),
+          Align(
+            alignment: Alignment.centerLeft,
+            child:  Padding(padding: EdgeInsets.all(15),
+                // child:  Text(widget.caption, style: TextStyle(color: Colors.white)),
+                child:RichText(
+                    text: TextSpan(children: [
+                      TextSpan(
+                          text: '${widget.caption}',
+                          style: GoogleFonts.abhayaLibre(
+                              textStyle: TextStyle(
+                                // fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 17,
+                              ))),
+                    ]))
+            ),
+          ),
           if(widget.distFromUser != null)
-            Text("${(widget.distFromUser * meterToMileConversion).toStringAsFixed(2)} miles")
+            Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                    padding: EdgeInsets.all(10),
+                    // child: Text("${(widget.distFromUser * meterToMileConversion).toStringAsFixed(2)} miles")
+                    child:RichText(
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: '${(widget.distFromUser * meterToMileConversion).toStringAsFixed(2)} miles',
+                              style: GoogleFonts.abhayaLibre(
+                                  textStyle: TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    // fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                  ))),
+                        ]))
+                )
+
+            )
 
         ]));
   }
@@ -291,9 +612,9 @@ class VideoPostState extends State<VideoPost> {
     chewieController = ChewieController(
         videoPlayerController: videoPlayerController,
         aspectRatio: 16 / 9,
-        autoPlay: true,
+        autoPlay: false,
         // looping: true,
-        autoInitialize: true);
+        autoInitialize: false);//this might fix the crashing
 
     // BetterPlayerDataSource dataSource = BetterPlayerDataSource(
     //   BetterPlayerDataSourceType.network,
@@ -310,7 +631,7 @@ class VideoPostState extends State<VideoPost> {
 
     // return downloadUrl;
   }
-
+  @override
   initState() {
     //format posts date
     dt = widget.timestamp.toDate();
@@ -319,7 +640,7 @@ class VideoPostState extends State<VideoPost> {
 
     super.initState();
   }
-
+@override
   dispose() {
     // videoPlayerController.dispose();
     chewieController.dispose();
@@ -330,6 +651,9 @@ class VideoPostState extends State<VideoPost> {
     if (!chewieController.isFullScreen) {
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     }
+    // if(chewieController.isFullScreen){
+    //   SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight]);
+    // }
   }
 
   @override
@@ -338,41 +662,115 @@ class VideoPostState extends State<VideoPost> {
         margin: const EdgeInsets.all(15.0),
         // padding: const EdgeInsets.all(3.0),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-            color: Colors.white,
-            border: Border.all(color: Colors.blueAccent)),
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          color: Colors.blue,
+          border:  Border.all(color: Colors.black),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 5,
+              blurRadius: 5,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],),
         child: Column(children: [
           LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
-            return Container(
-              decoration: BoxDecoration(
-                  color: Colors.blueAccent,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(8))),
-              width: constraints.maxWidth,
-              child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Align(
-                            alignment: Alignment.topLeft,
-                            child: Text('${widget.username}')),
-                        Align(
-                            alignment: Alignment.topRight,
-                            child: Text('$formattedDate'))
-                      ])),
-            );
-          }),
+                return Container(
+                  child:Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Align(
+                              alignment: Alignment.topLeft,
+                              // child: Text('${widget.username}', style: TextStyle(color: Colors.white))
+                              child: RichText(
+                                  text: TextSpan(children: [
+                                    TextSpan(
+                                        text: '${widget.username}',
+                                        style: GoogleFonts.abhayaLibre(
+                                            textStyle: TextStyle(
+                                              // fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontSize: 25,
+                                            ))),
+                                  ])),
+                            ),
+                            Align(
+                              alignment: Alignment.topRight,
+                              // child: Text('$formattedDate', style:TextStyle(color:Colors.white))
+                              child: RichText(
+                                  text: TextSpan(children: [
+                                    TextSpan(
+                                        text: '$formattedDate',
+                                        style: GoogleFonts.abhayaLibre(
+                                            textStyle: TextStyle(
+                                              // fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontSize: 15,
+                                            ))),
+                                  ])),
+                            )
+                          ])),
+                  width: constraints.maxWidth,
+                  // child: Padding(
+                  //     padding: EdgeInsets.all(10),
+                  //     child: Row(
+                  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //         children: <Widget>[
+                  //           Align(
+                  //               alignment: Alignment.topLeft,
+                  //               child: Text('${widget.username}')),
+                  //           Align(
+                  //               alignment: Alignment.topRight,
+                  //               child: Text('$formattedDate'))
+                  //         ])),
+                );
+              }),
           // Text('${widget.username}'),
           FutureBuilder(
               future: getDownloadUrl(),
               builder: (BuildContext context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
-                  return AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: Chewie(controller: chewieController));
+                  // return AspectRatio(
+                  //     aspectRatio: 16 / 9,
+                  //     child: Chewie(controller: chewieController));
+                  return LayoutBuilder(
+                      builder: (BuildContext context, BoxConstraints constraints){
+                        return Container(
+                            decoration:BoxDecoration(
+                                boxShadow: [
+                                  // BoxShadow(
+                                  //   color: Colors.grey
+                                  // ),
+                                  // BoxShadow(
+                                  //   color: Colors.grey,
+                                  //   spreadRadius:  -12,
+                                  //   blurRadius: 12.0
+                                  // )
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.5),
+                                    spreadRadius: -5,
+                                    blurRadius: 5,
+                                    // offset: Offset(0, -3), // changes position of shadow
+                                  ),
+                                ],
+                                color: Colors.white,
+                                border: Border(
+                                  top: BorderSide(color: Colors.black),
+                                  bottom: BorderSide(color: Colors.black),
+                                )
+                            ),
+                            width: constraints.maxWidth,
+
+                            child:
+                            AspectRatio(
+                                aspectRatio: 16 / 9,
+                                child: Chewie(controller: chewieController))
+                        );
+                      }
+                  );
                   // return SizedBox(
                   //   height: 200,
                   //   child: AspectRatio(aspectRatio: 16/9,
@@ -395,9 +793,44 @@ class VideoPostState extends State<VideoPost> {
           // ),
           // ),
           // VideoPlayerController.network(snapshot);
-          Text('${widget.caption}'),
+          Align(
+            alignment: Alignment.centerLeft,
+            child:  Padding(padding: EdgeInsets.all(15),
+                // child:  Text(widget.caption, style: TextStyle(color: Colors.white)),
+                child:RichText(
+                    text: TextSpan(children: [
+                      TextSpan(
+                          text: '${widget.caption}',
+                          style: GoogleFonts.abhayaLibre(
+                              textStyle: TextStyle(
+                                // fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 17,
+                              ))),
+                    ]))
+            ),
+          ),
           if(widget.distFromUser != null)
-            Text("${(widget.distFromUser * meterToMileConversion).toStringAsFixed(2)} miles")
+            Align(
+                alignment: Alignment.bottomRight,
+                child: Padding(
+                    padding: EdgeInsets.all(10),
+                    // child: Text("${(widget.distFromUser * meterToMileConversion).toStringAsFixed(2)} miles")
+                    child:RichText(
+                        text: TextSpan(children: [
+                          TextSpan(
+                              text: '${(widget.distFromUser * meterToMileConversion).toStringAsFixed(2)} miles',
+                              style: GoogleFonts.abhayaLibre(
+                                  textStyle: TextStyle(
+                                    fontStyle: FontStyle.italic,
+                                    // fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                  ))),
+                        ]))
+                )
+
+            )
         ]));
   }
 }

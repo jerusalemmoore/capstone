@@ -56,7 +56,8 @@ class ExplorePostRendererState extends State<ExplorePostRenderer> {
                     ? ""
                     : widget.postData['caption'],
                 videoPath: widget.postData['videoFile'],
-                timestamp: widget.postData['timestamp']);
+                timestamp: widget.postData['timestamp'],
+                distFromUser: widget.distFromUser);
           },
           'location': (BuildContext context) {
             // return Text("location post");
@@ -69,7 +70,7 @@ class ExplorePostRendererState extends State<ExplorePostRenderer> {
                 caption: (widget.postData['caption'] == null)
                     ? ""
                     : widget.postData['caption'],
-                location: widget.postData['location'],
+                location: widget.postData['address'],
                 timestamp: widget.postData['timestamp'],
               distFromUser: widget.distFromUser,
             );

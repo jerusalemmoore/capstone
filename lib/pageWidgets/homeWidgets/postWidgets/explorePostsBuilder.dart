@@ -9,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'postRenderer.dart';
 import '../mapWidget.dart';
+
 class ExplorePostsBuilder extends StatefulWidget {
   const ExplorePostsBuilder({Key? key, required this.user}) : super(key: key);
   final user;
@@ -17,9 +18,12 @@ class ExplorePostsBuilder extends StatefulWidget {
   ExplorePostsBuilderState createState() => ExplorePostsBuilderState();
 }
 
-class ExplorePostsBuilderState extends State<ExplorePostsBuilder> {
+class ExplorePostsBuilderState extends State<ExplorePostsBuilder> with
+AutomaticKeepAliveClientMixin<ExplorePostsBuilder>{
   var posts = [];
-  var postsAndDists = [];
+  var locationPosts = [];
+  var usersLocationsAndDists = [];
+  var locationsAndDists = [];
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
   late final currentPosition;
   Future<bool> _handlePermission() async {
@@ -80,7 +84,7 @@ class ExplorePostsBuilderState extends State<ExplorePostsBuilder> {
 
   Future<void> loadPos() async {
     bool permission = await _handlePermission();
-    try{
+    try {
       if (permission) {
         print("success loading pos");
         currentPosition = await Geolocator.getCurrentPosition(
@@ -93,141 +97,157 @@ class ExplorePostsBuilderState extends State<ExplorePostsBuilder> {
         print("failure");
         return;
       }
-    } catch (e){
+    } catch (e) {
       print(e);
     }
-
   }
+
   @override
-  void initState(){
-    postsAndDists.clear();
+  void initState() {
+    usersLocationsAndDists.clear();
     posts.clear();
     super.initState();
   }
+
   @override
   void dispose() {
     super.dispose();
   }
 
   Future<List> retrievePosts() async {
-  try{
-    await loadPos();
-    // print('yes');
-    // setState((){
-    postsAndDists.clear();
-    posts.clear();
-    // });
-    await FirebaseFirestore.instance
-        .collection('creators')
-        .get()
-        .then((QuerySnapshot querySnapshot) {
-      querySnapshot.docs.forEach((doc)  async {
-        // if(!posts.contains(doc)){
-        // setState((){
-        // try{
-
-        //
-        // }
-        // catch(e){
-        //   print(e);
-        // }
-        //
-        // var postWithDist = [distanceFromUser, doc];
-        // print(doc['username']);
-        // print(doc['address']);
-        // print(distanceFromUser);
-
-         posts.add(doc);
-        // print(doc);
-        // });
-
-        // Placemark place = doc.data()![;
-        //   print("yes");
-        // }
-        // print("yes");
-        // print(posts);
-        // print(posts.length);
-      });
-    });
-  } catch (e){
-    print("Error: $e");
-  }
-
-    print('size of ${posts.length}');
-    for(int i = 0; i < posts.length; i++){
-      List<Location> locationInfo = await locationFromAddress(posts[i]['address']);
-      double distanceFromUser = Geolocator
-          .distanceBetween(currentPosition.latitude, currentPosition.longitude, locationInfo[0].latitude,locationInfo[0].longitude);
-      var postWithDistToUser = [distanceFromUser,posts[i]];
-      postsAndDists.add(postWithDistToUser);
-      // print(posts[i]);
-    }
-    postsAndDists.sort((a,b){
+    try {
+      await loadPos();
       // print('yes');
-      // print('${a}');
-      // print('${b}');
-      return a[0].compareTo(b[0]);
-    });
-    for(int i = 0; i < postsAndDists.length; i++){
-      print(i);
+      // setState((){
+      // locationPosts.clear();
+      usersLocationsAndDists.clear();
+      posts.clear();
+      // });
+      await FirebaseFirestore.instance
+          .collection('creators')
+          .get()
+          .then((QuerySnapshot users) {
+        users.docs.forEach((doc) {
+          //test to see if this works without async
+          if (doc['email'] != widget.user.email) {
+            posts.add(doc);
+          }
+        });
+      });
+
+
+      await FirebaseFirestore.instance
+      .collection('locationPosts')
+      .get()
+      .then((QuerySnapshot locations) {
+        locations.docs.forEach((doc)  {
+          if(doc['email'] != widget.user.email){
+            // print("location: $doc\n");
+            posts.add(doc);
+          }
+        });
+      });
+
+      for (int i = 0; i < posts.length; i++) {
+        List<Location> locationInfo =
+        await locationFromAddress(posts[i]['address']);
+        double distanceFromUser = Geolocator.distanceBetween(
+            currentPosition.latitude,
+            currentPosition.longitude,
+            locationInfo[0].latitude,
+            locationInfo[0].longitude);
+        var postWithDistToUser = [distanceFromUser, posts[i]];
+        usersLocationsAndDists.add(postWithDistToUser);
+        // print(posts[i]);
+        usersLocationsAndDists.sort((a, b) {
+          // print('yes');
+          // print('${a}');
+          // print('${b}');
+          return a[0].compareTo(b[0]);
+        });
+      }
+    } catch (e) {
+      print("Error: $e");
     }
-    // posts.sort()
-    return postsAndDists;
+    return usersLocationsAndDists;
   }
+  bool get wantKeepAlive=> true;//this was for keepalive, might be pointless
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: retrievePosts(),
-      builder:  (BuildContext context,  AsyncSnapshot snapshot) {
-        if(snapshot.connectionState == ConnectionState.done){
+    super.build(context);//this was for keepalive, might be pointless
+    return FutureBuilder<List>(
+      future: retrievePosts(), //get all userdocs
+      builder: (BuildContext context, AsyncSnapshot usersAndDists) {
+        if (usersAndDists.connectionState == ConnectionState.done) {
+          // print(usersAndDists.data);
           // query example to get documents address field from postsAndDists snapshot: snapshot.data[index][1].data()['address']
           // return Text('${snapshot.data[index][1].data()['address']}');
           return ListView.builder(
-            // physics: NeverScrollableScrollPhysics(),
-              itemCount: snapshot.data.length,
-                itemBuilder:(context, index1){
-                  // query example to get documents address field from postsAndDists snapshot: snapshot.data[index][1].data()['address']
-                  // var userPosts = snapshot.data[index][1].get().collection('myposts');
-              // return Text('${snapshot.data[index][1].data()['address']}');
+              //view builder to display info form each users doc
+              // physics: NeverScrollableScrollPhysics(),
+              itemCount: usersAndDists.data!.length, //number of users
+              itemBuilder: (context, userIter) {
+                // query example to get documents address field from postsAndDists snapshot: snapshot.data[index][1].data()['address']
+                // var userPosts = snapshot.data[index][1].get().collection('myposts');
+                // return Text('${snapshot.data[index][1].data()['address']}');
+                //for each user doc get their collection of posts
+                print('${usersAndDists.data[userIter][1].data()['postType']}\n');
+                print('${(usersAndDists.data[userIter][1].data()['postType']).runtimeType}\n');
+                if(usersAndDists.data[userIter][1].data()['postType'] == (null)){
                   return StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance.collection('creators')
-                        .doc(snapshot.data[index1][1].data()['email'])
-                        .collection('myposts')
-                        .orderBy('timestamp', descending: true)
-                        .snapshots(),
-                    builder:(BuildContext context, AsyncSnapshot<QuerySnapshot> postsSnapshot) {
-                      var collectionInstance = postsSnapshot.data;
-                      if (collectionInstance == null) {
-                        return SizedBox.shrink();
-                      }
-                      else {
-                        // if(!(postsSnapshot.data!.size.toString() == '0')){
-                        return ListView.builder(
-                            shrinkWrap: true,
-                            addAutomaticKeepAlives: false,
+                      stream: FirebaseFirestore.instance
+                          .collection('creators')
+                          .doc(usersAndDists.data[userIter][1].data()['email'])
+                          .collection('myposts')
+                          .orderBy(
+                        'timestamp',
+                        descending: true,
+                      )
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> postsSnapshot) {
+                        var collectionInstance = postsSnapshot.data;
+                        if (collectionInstance == null) {
+                          return SizedBox.shrink();
+                        } else {
+                          return ListView.builder(
+                            // itemExtent: 3,
+                              shrinkWrap: true,
+                              addAutomaticKeepAlives: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: postsSnapshot.data!.size,
+                              itemBuilder: (context, index2) {
+                                List docs = postsSnapshot.data!.docs;
+                                if (docs[index2].data()['postType'] !=
+                                    'location') {
+                                  // print('yes');
+                                  // print('${docs[index2]}\n');
+                                  return ExplorePostRenderer(
+                                      postData: docs[index2],
+                                      distFromUser: usersAndDists.data[userIter]
+                                      [0]);
+                                } else {
+                                  // print("locatino post");
+                                  // print(docs[index2].data);
+                                  return SizedBox.shrink();
+                                }
 
-                            physics: NeverScrollableScrollPhysics(),
+                              });
+                        }
+                      });
+                }
+                else{
+                  // return Text("location");
+                  print('other list ${usersAndDists.data[userIter][1]}');
+                  return ExplorePostRenderer(
+                    postData: usersAndDists.data[userIter][1],
+                    distFromUser: usersAndDists.data[userIter][0]
+                  );
+                }
 
-                            itemCount: postsSnapshot.data!.size,
-                            itemBuilder: (context, index2) {
-                              List docs = postsSnapshot.data!.docs;
-                              return ExplorePostRenderer(postData: docs[index2],
-                                  distFromUser: snapshot.data[index1][0]);
-                            }
-                        );
-                        // }
-
-                        // else{
-                        //   return Text("yes");
-                        // }
-                      }
-                    } );
-          }
-          );
-          return Text('no');
-        }
-        else{
+              });
+        } else {
           // print(snapshot);
           return Column(children: <Widget>[
             Spacer(),
@@ -235,58 +255,7 @@ class ExplorePostsBuilderState extends State<ExplorePostsBuilder> {
             Spacer()
           ]);
         }
-    },
-
+      },
     );
-    //   StreamBuilder<QuerySnapshot>(
-    //   stream: FirebaseFirestore.instance
-    //       .collection('creators')
-    //       .doc(widget.user.email)
-    //       .collection('myposts')
-    //       .orderBy('timestamp', descending: true)
-    //       .snapshots(),
-    //   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-    //     if (snapshot.hasData) {
-    //       // return ListView.builder(
-    //       //   itemCount: posts.length,
-    //       //     itemBuilder: (BuildContext context, int index){
-    //       //       // return Container(
-    //       //       //   height:50,
-    //       //       //   child:Center(child: Text('${posts[index]['timestamp']}')),
-    //       //       // );
-    //       //       return PostRenderer(postData: posts[index]);
-    //       //     }
-    //       // );
-    //       if (snapshot.data!.size.toString() == '0') {
-    //         return Center(child: Text("No Posts"));
-    //       }
-    //       return ListView.builder(
-    //           itemCount: snapshot.data!.size,
-    //           itemBuilder: (context, index) {
-    //             List docs = snapshot.data!.docs;
-    //             return PostRenderer(postData: docs[index]);
-    //           });
-    //       // return ListView(
-    //       //
-    //       //   addAutomaticKeepAlives: false,
-    //       //     children: snapshot.data!.docs.map((DocumentSnapshot document){
-    //       //       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-    //       //       // return ListTile(
-    //       //       //     title: Text('${data['timestamp']}'),
-    //       //       //     subtitle: Text('${data['caption']}')
-    //       //       // );
-    //       //       return PostRenderer(postData: document);
-    //       //     }).toList(),
-    //       // );
-    //
-    //     } else {
-    //       return Column(children: <Widget>[
-    //         Spacer(),
-    //         CircularProgressIndicator(),
-    //         Spacer()
-    //       ]);
-    //     }
-    //   },
-    // );
   }
 }

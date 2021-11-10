@@ -1,6 +1,8 @@
 //simple implementation of geolocation widget for use on explore page and map
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -30,7 +32,8 @@ class _PositionItem {
 class MapWidgetState extends State<MapWidget> {
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
   final searchScaffoldKey = GlobalKey<ScaffoldState>();
-  final List<_PositionItem> _positionItems = <_PositionItem>[];
+  var markerInfo = [];
+  List<Marker> markers = [];
   late Position currentPosition;
   late GoogleMapController mapController;
   late LatLng _center;
@@ -45,12 +48,39 @@ class MapWidgetState extends State<MapWidget> {
 
   @override
   void initState() {
-    loadPos();
+    // setMarkers();
+    CollectionReference locationPostsReference = FirebaseFirestore.instance.collection('locationPosts');
+    locationPostsReference.snapshots().listen((querySnapshot){
+      querySnapshot.docs.forEach((doc) async {
+        print(doc['address']);
+        markerInfo.add(doc);
+        for (int i = 0; i < markerInfo.length; i++) {
+          // print("1\n\n\n\n\n");
+          MarkerId markerId = MarkerId(i.toString());
+          List<Location> locationInfo =
+              await locationFromAddress(markerInfo[i]['address']);
+          print(locationInfo[0]);
+          Marker marker = Marker(
+              markerId: markerId,
+              position: LatLng(
+                  locationInfo[0].latitude, locationInfo[0].longitude),
+              infoWindow: InfoWindow(
+                title: markerInfo[i]['username'],
+                snippet: markerInfo[i]['address'],
+                onTap: (){
+
+                //   _onMarkerTapped(markerId);
+                }
+              ));
+          markers.add(marker);
+      }});
+    });
     super.initState();
     // await _handlePermission();
     // currentPosition = await loadPos();
   }
 
+  @override
   void dispose() {
     mapController.dispose();
     super.dispose();
@@ -126,6 +156,21 @@ class MapWidgetState extends State<MapWidget> {
     return true;
   }
 
+
+
+
+
+
+
+  // Future<void> initFunctions() async {
+  //   await loadPos();
+  //   print('finished load pos');
+  //   await getMarkers();
+  //   print('finished get markers');
+  //   await setMarkers();
+  //   print('finished set markers');
+  // }
+
   Future<void> loadPos() async {
     bool permission = await _handlePermission();
     if (permission) {
@@ -139,6 +184,9 @@ class MapWidgetState extends State<MapWidget> {
       print("failure");
       return;
     }
+
+
+
   }
   // void _updatePositionList(_PositionItemType type, String displayValue) {
   //   _positionItems.add(_PositionItem(type, displayValue));
@@ -153,20 +201,24 @@ class MapWidgetState extends State<MapWidget> {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: loadPos(),
-        builder: (context, snapshot) {
+        builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return GoogleMap(
+            // print(snapshot.data[0]);
+
+            return  GoogleMap(
                 myLocationEnabled: true,
                 myLocationButtonEnabled: true,
                 onMapCreated: _onMapCreated,
                 initialCameraPosition:
-                    CameraPosition(target: _center, zoom: 15));
+                    CameraPosition(target: _center, zoom: 15),
+                markers: markers.toSet());
           } else if (snapshot.hasError) {
             return Text("Error");
           } else {
             return Center(child: CircularProgressIndicator());
           }
-        });
+        }
+        );
     Column(
       children: <Widget>[Text("$currentPosition")],
     );

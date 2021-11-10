@@ -63,7 +63,7 @@ class PostRendererState extends State<PostRenderer> {
                 caption: (widget.postData['caption'] == null)
                     ? ""
                     : widget.postData['caption'],
-                location: widget.postData['location'],
+                location: widget.postData['address'],
                 timestamp: widget.postData['timestamp']);
           },
           'caption': (BuildContext context) {

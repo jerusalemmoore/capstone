@@ -40,11 +40,11 @@ dependencies:
   google_sign_in: ^5.0.0-nullsafety
   google_fonts: ^2.0.0-nullsafety.0
   flutter_signin_button: ^2.0.0
-  flutter_google_places: ^0.3.0
+#  flutter_google_places: ^0.3.0
   location: ^4.3.0
   geolocator: ^7.6.2
   geocoding: ^2.0.1
-
+  rxdart: ^0.27.2
   uuid: ^3.0.4
   http: ^0.13.4
   google_place: ^0.4.3
@@ -56,6 +56,7 @@ dependencies:
   flutter_conditional_rendering: ^2.0.0
   intl: ^0.17.0
   better_player: ^0.0.77
+  auto_size_text: ^3.0.0
 
 
 

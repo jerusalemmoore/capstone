@@ -175,9 +175,9 @@ class SignInFormState extends State<SignInForm> {
                                     content: Text('User signed in')),
                               );
                               //NAVIGATE TO HOME SCREEN WIDGET HERE
-                              Navigator.of(context).pushNamed(
-                                   'userHome'
-                                );
+                              // Navigator.of(context).pushNamed(
+                              //      'userHome'
+                              //   );
 
                             }
                           });

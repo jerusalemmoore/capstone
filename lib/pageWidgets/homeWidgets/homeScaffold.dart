@@ -119,7 +119,7 @@ class HomeScaffoldState extends State<HomeScaffold> {
           // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
+             DrawerHeader(
               child: Text("$userEmail"),
               decoration: BoxDecoration(
                 color: Colors.blue,
@@ -153,7 +153,20 @@ class HomeScaffoldState extends State<HomeScaffold> {
         elevation: 0.0,
         // backgroundColor: Colors.white,
         // foregroundColor: Colors.black,
-        title: Text(pageTitles[screenIndex]),
+        // title: Text(pageTitles[screenIndex]),
+        title: RichText(
+            text: TextSpan(
+                style: GoogleFonts.abhayaLibre(
+                    textStyle: TextStyle(
+                      // fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 25,
+                    )),
+                children: [
+                  TextSpan(
+                    text: '${pageTitles[screenIndex]}',
+                  ),
+                ])),
       ),
       body: Container(
           decoration: BoxDecoration(

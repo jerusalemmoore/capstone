@@ -62,7 +62,7 @@ class LocationFormState extends State<LocationForm> {
         'postType' : widget.formType,
         'timestamp' : DateTime.now(),
         'caption': caption,
-        'location': address,
+        'address': address,
         })
           .then((value) => print("Location post Added"))
           .catchError((error) =>
@@ -72,11 +72,12 @@ class LocationFormState extends State<LocationForm> {
       //place locationPosts in seperate collection for querying proximity in explore page
       CollectionReference locationCollection = FirebaseFirestore.instance.collection('locationPosts');
       locationCollection.doc().set({
+        'email' : widget.user.email,
         'username' : userDoc.data()['username'],//gets the username from the users doc in firebase
         'postType' : widget.formType,
         'timestamp' : DateTime.now(),
         'caption': caption,
-        'location': address,
+        'address': address,
       });
       return Future<bool>.value(true);
     } catch (e) {
