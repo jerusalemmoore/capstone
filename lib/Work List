@@ -1,0 +1,34 @@
+//GOALS
+//TODO: YOU STILL NEED TO VALIDATE ADDRESS WITH GOOGLE PLACES(PRIMARY)//address validated with google places, make sure its stored correctly to firestore
+//TODO: FINISH SIGN IN LOGIC AT SIGN IN SCREEN, SHOULD BE SIMILAR TO REGISTRATION(PRIMARY)//DONE, CHECK VALIDATORS
+//TODO: HOME PAGE NEEDS PROFILE PIC, USERNAME OR EMAIL DISPLAYED, SPACE FOR POSTS (PRIMARY)//WORK ON POSTS
+//TODO: HOME ALSO NEEDS AN ABOUT, CAN UPDATE WITH FORM(SECONDARY)//DONE
+//TODO: TIME CONSTRAINTS FOR LOCATION POSTS WOULD BE HELPFUL
+//TODO: LOOK AT MAPS LAUNCHER FOR FLUTTER
+//TODO: SET UP VALIDATOR TO CHECK FOR DUPLICATE USERNAMES
+//TODO: LOOK UP MEMOIZER TO KEEP FUTURE FROM RECALLING ITSELF IN EXPLORE
+//TODO: GET RID OF USERS OWN POSTS IN EXPLORE PAGE
+//TODO: LOOK INTO CRASHLYTICS FOR BETTER DEBUGGING
+//TODO: MAKE THE POSTS RENDERER SEND THE DOC ITSELF TO THE POST AND LET POST GATHER DATA
+//TODO: DO ERROR CHECKING FOR WHEN LOCATION SERVICES AREN'T PROVIDED
+//AREAS OF CONCERN
+
+    -this happens on logins and registration
+    Unhandled Exception: Looking up a deactivated widget's ancestor is unsafe.
+    E/flutter (23202): At this point the state of the widget's element tree is no longer stable.
+    E/flutter (23202): To safely refer to a widget's ancestor in its dispose() method, save a reference to the ancestor by calling dependOnInheritedWidgetOfExactType() in the widget's didChangeDependencies() method.
+
+    -FIXED
+    -look again at storing userdocs and locations in the same list, there are errors when loading location posts
+
+//CURRENT
+   -EDIT POST WIDGETS OF EACH TYPE TO PRESENT DATA AS EXPECTED
+   -WORK ON FINISHING EXPLORE PAGE FUNCTIONALITY
+//NEXT
+    -GET LIST
+    -OTHER USER WIDGET
+
+
+//SECURITY
+MIGHT WANT TO STORE INFO MORE PRIVATELY FOR APIS(DOTENV)
+CHANGED
