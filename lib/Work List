@@ -9,6 +9,8 @@
 //TODO: LOOK UP MEMOIZER TO KEEP FUTURE FROM RECALLING ITSELF IN EXPLORE
 //TODO: GET RID OF USERS OWN POSTS IN EXPLORE PAGE
 //TODO: LOOK INTO CRASHLYTICS FOR BETTER DEBUGGING
+//TODO: MAKE THE POSTS RENDERER SEND THE DOC ITSELF TO THE POST AND LET POST GATHER DATA
+//TODO: DO ERROR CHECKING FOR WHEN LOCATION SERVICES AREN'T PROVIDED
 //AREAS OF CONCERN
 
     -this happens on logins and registration
@@ -16,12 +18,15 @@
     E/flutter (23202): At this point the state of the widget's element tree is no longer stable.
     E/flutter (23202): To safely refer to a widget's ancestor in its dispose() method, save a reference to the ancestor by calling dependOnInheritedWidgetOfExactType() in the widget's didChangeDependencies() method.
 
+    -FIXED
     -look again at storing userdocs and locations in the same list, there are errors when loading location posts
+
 //CURRENT
    -EDIT POST WIDGETS OF EACH TYPE TO PRESENT DATA AS EXPECTED
    -WORK ON FINISHING EXPLORE PAGE FUNCTIONALITY
 //NEXT
     -GET LIST
+    -OTHER USER WIDGET
 
 
 //SECURITY

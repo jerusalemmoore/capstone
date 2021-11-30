@@ -1,6 +1,6 @@
-import 'package:capstone/pageWidgets/homeWidgets/postWidgets/postsBuilder.dart';
+import '../../../postWidgets/postsBuilder.dart';
 import 'package:flutter/cupertino.dart';
-import 'postWidgets/explorePostsBuilder.dart';
+import '../../../postWidgets/explorePostsBuilder.dart';
 
 class ExploreWidget extends StatefulWidget {
   const ExploreWidget({Key? key, required this.user}) : super(key: key);

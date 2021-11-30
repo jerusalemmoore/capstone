@@ -1,8 +1,4 @@
-import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../../utilWidgets/placeSuggestionField.dart';
+//Implementation of a form for registering creator accounts
 //look up formbloc plugin for implementing asynchronous validators
 //registration form for a Creator
 //fields:
@@ -10,6 +6,11 @@ import '../../utilWidgets/placeSuggestionField.dart';
 //email
 //password
 //address (used for proximity to users that are exploring on map or explore page)
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../../utilWidgets/placeSuggestionField.dart';
 class CreatorRegistrationForm extends StatefulWidget {
   const CreatorRegistrationForm({Key? key}) : super(key: key);
 
@@ -83,7 +84,6 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
     CollectionReference creators =
     FirebaseFirestore.instance.collection('creators');
     try{
-
       userDoc = creators
           .doc(email)
           .set({
@@ -131,28 +131,25 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
     setState(() {});
   }
   Future<bool> usernameExists() async{
+    print('username $username');
     var collection = await FirebaseFirestore.instance.collection('creators').
     get()
     .then((QuerySnapshot snapshot){
       snapshot.docs.forEach((doc){
         if(doc['username'] == username){
+          print('yes');
           setState(() {
             exists = true;
           });
 
         }
-        else{
-          setState((){
-            exists = false;
-          });
-        }
     });
     });
     if(exists){
-      return Future<bool>.value(true);
+     return (true);
     }
     else{
-      return Future<bool>.value(false);
+      return (false);
     }
     // var doc = await collection.doc(email).get();
     // if(doc.exists){

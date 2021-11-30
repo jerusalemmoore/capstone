@@ -1,8 +1,9 @@
-//Form in order to register user to firebase auth and firestore with a creator account
+//Page implementation that presents a form
+//to register user to firebase auth and firestore with a creator account
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../utilWidgets/creatorRegistrationForm.dart';
+import 'creatorRegistrationForm.dart';
 
 //page registration widget for signing up as a Creator
 class CreatorRegistrationPage extends StatefulWidget {

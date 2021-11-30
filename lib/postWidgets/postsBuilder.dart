@@ -6,8 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'postRenderer.dart';
 
 class PostsBuilder extends StatefulWidget {
-  const PostsBuilder({Key? key, required this.user}) : super(key: key);
-  final user;
+  const PostsBuilder({Key? key, required this.userEmail}) : super(key: key);
+  final userEmail;
 
   @override
   PostsBuilderState createState() => PostsBuilderState();
@@ -23,9 +23,10 @@ class PostsBuilderState extends State<PostsBuilder> {
     // setState((){
     //   posts.clear();
     // });
+
     await FirebaseFirestore.instance
         .collection('creators')
-        .doc(widget.user.email)
+        .doc(widget.userEmail)
         .collection('myposts')
         .get()
         .then((QuerySnapshot querySnapshot) {
@@ -46,7 +47,7 @@ class PostsBuilderState extends State<PostsBuilder> {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('creators')
-          .doc(widget.user.email)
+          .doc(widget.userEmail)
           .collection('myposts')
           .orderBy('timestamp', descending: true)
           .snapshots(),
@@ -62,16 +63,21 @@ class PostsBuilderState extends State<PostsBuilder> {
           //       return PostRenderer(postData: posts[index]);
           //     }
           // );
+          print(widget.userEmail);
+          print(snapshot);
           if (snapshot.data!.size.toString() == '0') {
             return Center(child: Text("No Posts"));
           }
-          return ListView.builder(
-            addAutomaticKeepAlives: false,
-              itemCount: snapshot.data!.size,
-              itemBuilder: (context, index) {
-                List docs = snapshot.data!.docs;
-                return PostRenderer(postData: docs[index]);
-              });
+          else{
+            return ListView.builder(
+                addAutomaticKeepAlives: false,
+                itemCount: snapshot.data!.size,
+                itemBuilder: (context, index) {
+                  List docs = snapshot.data!.docs;
+                  return PostRenderer(postData: docs[index]);
+                });
+          }
+
           // return ListView(
           //
           //   addAutomaticKeepAlives: false,

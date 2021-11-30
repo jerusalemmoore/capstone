@@ -33,12 +33,7 @@ class ExplorePostRendererState extends State<ExplorePostRenderer> {
             //find a better way to make "" the default val in posts with optional caption
 
             return ImagePost(
-                username: (widget.postData['username']),
-                caption: (widget.postData['caption'] == null)
-                    ? ""
-                    : widget.postData['caption'],
-                imagePath: widget.postData['imageFile'],
-                timestamp: widget.postData['timestamp'],
+              postInfo: widget.postData,
               distFromUser: widget.distFromUser,
 
             );
@@ -51,12 +46,7 @@ class ExplorePostRendererState extends State<ExplorePostRenderer> {
             //   child:Center(child: Text('${widget.postData['timestamp']}')),
             // );
             return VideoPost(
-                username: (widget.postData['username']),
-                caption: (widget.postData['caption'] == null)
-                    ? ""
-                    : widget.postData['caption'],
-                videoPath: widget.postData['videoFile'],
-                timestamp: widget.postData['timestamp'],
+                postInfo: widget.postData,
                 distFromUser: widget.distFromUser);
           },
           'location': (BuildContext context) {
@@ -66,12 +56,7 @@ class ExplorePostRendererState extends State<ExplorePostRenderer> {
             //   child:Center(child: Text('${widget.postData['timestamp']}')),
             // );
             return LocationPost(
-                username: (widget.postData['username']),
-                caption: (widget.postData['caption'] == null)
-                    ? ""
-                    : widget.postData['caption'],
-                location: widget.postData['address'],
-                timestamp: widget.postData['timestamp'],
+              postInfo: widget.postData,
               distFromUser: widget.distFromUser,
             );
           },
@@ -82,9 +67,7 @@ class ExplorePostRendererState extends State<ExplorePostRenderer> {
             //   child:Center(child: Text('${widget.postData['timestamp']}')),
             // );
             return CaptionPost(
-                username: (widget.postData['username']),
-                caption: widget.postData['caption'],
-                timestamp: widget.postData['timestamp'],
+              postInfo: widget.postData,
               distFromUser: widget.distFromUser,
 
             );

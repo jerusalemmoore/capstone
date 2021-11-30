@@ -1,5 +1,7 @@
-//simple implementation of geolocation widget for use on explore page and map
+//Implementation of page including a google map that presents location
+//posts provided by creator type users
 import 'dart:async';
+import 'package:capstone/pageWidgets/otherUser.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
@@ -17,67 +19,59 @@ class MapWidget extends StatefulWidget {
   }
 }
 
-enum _PositionItemType {
-  log,
-  position,
-}
-
-class _PositionItem {
-  _PositionItem(this.type, this.displayValue);
-
-  final _PositionItemType type;
-  final String displayValue;
-}
-
 class MapWidgetState extends State<MapWidget> {
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
   final searchScaffoldKey = GlobalKey<ScaffoldState>();
   var markerInfo = [];
+  var docs = [];
   List<Marker> markers = [];
   late Position currentPosition;
   late GoogleMapController mapController;
   late LatLng _center;
-  static const String _kLocationServicesDisabledMessage =
-      'Location services are disabled.';
-  static const String _kPermissionDeniedMessage = 'Permission denied.';
-  static const String _kPermissionDeniedForeverMessage =
-      'Permission denied forever.';
-  static const String _kPermissionGrantedMessage = 'Permission granted.';
+  // static const String _kLocationServicesDisabledMessage =
+  //     'Location services are disabled.';
+  // static const String _kPermissionDeniedMessage = 'Permission denied.';
+  // static const String _kPermissionDeniedForeverMessage =
+  //     'Permission denied forever.';
+  // static const String _kPermissionGrantedMessage = 'Permission granted.';
 
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
 
   @override
   void initState() {
-    // setMarkers();
+
     CollectionReference locationPostsReference = FirebaseFirestore.instance.collection('locationPosts');
     locationPostsReference.snapshots().listen((querySnapshot){
       querySnapshot.docs.forEach((doc) async {
         print(doc['address']);
-        markerInfo.add(doc);
-        for (int i = 0; i < markerInfo.length; i++) {
-          // print("1\n\n\n\n\n");
-          MarkerId markerId = MarkerId(i.toString());
+          MarkerId markerId = MarkerId(doc.id.toString());
           List<Location> locationInfo =
-              await locationFromAddress(markerInfo[i]['address']);
+              await locationFromAddress(doc['address']);
           print(locationInfo[0]);
           Marker marker = Marker(
               markerId: markerId,
               position: LatLng(
                   locationInfo[0].latitude, locationInfo[0].longitude),
               infoWindow: InfoWindow(
-                title: markerInfo[i]['username'],
-                snippet: markerInfo[i]['address'],
+                title: doc['username'],
+                snippet: doc['caption'],
                 onTap: (){
-
-                //   _onMarkerTapped(markerId);
+                  print('marker tapped');
+                  print(doc['username']);
+                  print(doc['email']);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => OtherUserWidget(email: doc['email'])),
+                  );
                 }
               ));
           markers.add(marker);
-      }});
+      });
+      print("Marker list: $markers");
+
     });
     super.initState();
-    // await _handlePermission();
-    // currentPosition = await loadPos();
+
   }
 
   @override
@@ -85,20 +79,6 @@ class MapWidgetState extends State<MapWidget> {
     mapController.dispose();
     super.dispose();
   }
-  // Future<void> _getCurrentPosition() async {
-  //   final hasPermission = await _handlePermission();
-  //
-  //   if (!hasPermission) {
-  //     return;
-  //   }
-  //
-  //   final position = await _geolocatorPlatform.getCurrentPosition();
-  //   _currentPosition = _geolocatorPlatform.getCurrentPosition();
-  //   _updatePositionList(
-  //     _PositionItemType.position,
-  //     position.toString(),
-  //   );
-  // }
 
   Future<bool> _handlePermission() async {
     bool serviceEnabled;
@@ -108,6 +88,7 @@ class MapWidgetState extends State<MapWidget> {
     serviceEnabled = await _geolocatorPlatform.isLocationServiceEnabled();
 
     if (!serviceEnabled) {
+      print('service not enabled');
       // Location services are not enabled don't continue
       // accessing the position and request users of the
       // App to enable the location services.
@@ -123,6 +104,7 @@ class MapWidgetState extends State<MapWidget> {
     if (permission == LocationPermission.denied) {
       permission = await _geolocatorPlatform.requestPermission();
       if (permission == LocationPermission.denied) {
+        print('permission denied');
         // Permissions are denied, next time you could try
         // requesting permissions again (this is also where
         // Android's shouldShowRequestPermissionRationale
@@ -137,15 +119,15 @@ class MapWidgetState extends State<MapWidget> {
       }
     }
 
-    // if (permission == LocationPermission.deniedForever) {
-    //   // Permissions are denied forever, handle appropriately.
-    //   _updatePositionList(
-    //     _PositionItemType.log,
-    //     _kPermissionDeniedForeverMessage,
-    //   );
-    //
-    //   return false;
-    // }
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      // _updatePositionList(
+      //   _PositionItemType.log,
+      //   _kPermissionDeniedForeverMessage,
+      // );
+      print('permission denied forever');
+      return false;
+    }
     //
     // // When we reach here, permissions are granted and we can
     // // continue accessing the position of the device.
@@ -156,43 +138,24 @@ class MapWidgetState extends State<MapWidget> {
     return true;
   }
 
-
-
-
-
-
-
-  // Future<void> initFunctions() async {
-  //   await loadPos();
-  //   print('finished load pos');
-  //   await getMarkers();
-  //   print('finished get markers');
-  //   await setMarkers();
-  //   print('finished set markers');
-  // }
-
   Future<void> loadPos() async {
     bool permission = await _handlePermission();
     if (permission) {
-      print("success loading pos");
+      // print("success loading pos");
       currentPosition = await Geolocator.getCurrentPosition(
           forceAndroidLocationManager: true);
       print("lat ${currentPosition.latitude}");
       print("long ${currentPosition.longitude}");
       _center = LatLng(currentPosition.latitude, currentPosition.longitude);
-    } else {
-      print("failure");
-      return;
+    }
+    else {
+      // print("failure");
+      _center = LatLng(39.7332194472,-121.825863414);
     }
 
 
-
+  // print('center $_center');
   }
-  // void _updatePositionList(_PositionItemType type, String displayValue) {
-  //   _positionItems.add(_PositionItem(type, displayValue));
-  //   setState(() {});
-  // }
-
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
   }
@@ -204,7 +167,6 @@ class MapWidgetState extends State<MapWidget> {
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // print(snapshot.data[0]);
-
             return  GoogleMap(
                 myLocationEnabled: true,
                 myLocationButtonEnabled: true,
@@ -224,26 +186,3 @@ class MapWidgetState extends State<MapWidget> {
     );
   }
 }
-
-// custom scaffold that handle search
-// basically your widget need to extends [GooglePlacesAutocompleteWidget]
-// and your state [GooglePlacesAutocompleteState]
-// class MyApp extends StatefulWidget {
-//   @override
-//   _MyAppState createState() => _MyAppState();
-// }
-
-// class _MyAppState extends State<MyApp> {
-//   Mode _mode = Mode.overlay;
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: Column(
-//         children: <Widget>[
-//           TestWidget(),
-//         ]
-//       )
-//     );
-//   }
-// }

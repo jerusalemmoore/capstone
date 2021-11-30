@@ -160,6 +160,7 @@ class SignInFormState extends State<SignInForm> {
                             const SnackBar(content: Text('Processing Data')),
                           );
                         }
+                        //CHECK IF SIGN IN WAS SUCCESFUL
                         bool success = await signInCreator();
                         if (success) {
                           //listen for user sign in
@@ -167,9 +168,9 @@ class SignInFormState extends State<SignInForm> {
                               .idTokenChanges()
                               .listen((User? user) {
                             if (user == null) {
-                              print('User is currently signed out!');
+                              // print('User is currently signed out!');
                             } else {
-                              print('User is signed in!');
+                              // print('User is signed in!');
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text('User signed in')),

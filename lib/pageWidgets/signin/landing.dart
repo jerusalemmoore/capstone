@@ -1,13 +1,14 @@
 //Capstone Project (Artsy) application entry point
+//contains form for signing in user
 import 'package:capstone/pageWidgets/registration/registerCreator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/gestures.dart';
-import 'registration/registrationStart.dart';
-import 'homeWidgets/homeScaffold.dart';
-import '../utilWidgets/signInForm.dart';
+import '../registration/registrationStart.dart';
+import '../homeWidgets/homeScaffold.dart';
+import 'signInForm.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: 'landing',
         routes: {
-          'landing': (context) => LandingPage(title: 'Landing Page'),
+          'landing': (context) => LandingPage(title: 'Welcome'),
           'registration': (context) => RegistrationPage(title: "Registration"),
           'creatorRegistration': (context) =>
               CreatorRegistrationPage(title: "New Creator"),
@@ -118,8 +119,14 @@ class _LandingPageState extends State<LandingPage> {
                 // automaticallyImplyLeading: false,
                 // Here we take the value from the MyHomePage object that was created by
                 // the App.build method, and use it to set our appbar title.
-                title: Text(widget.title),
-              ),
+                title: Text(widget.title,
+                  style: GoogleFonts.abhayaLibre(
+                  textStyle: TextStyle(
+                  // fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 25,
+                ))),),
+
               body: Container(
                 constraints: BoxConstraints.expand(),
                   decoration: BoxDecoration(

@@ -30,13 +30,8 @@ class PostRendererState extends State<PostRenderer> {
             //   child:Center(child: Text('${widget.postData['timestamp']}')),
             // );
             //find a better way to make "" the default val in posts with optional caption
-            return ImagePost(
-                username: (widget.postData['username']),
-                caption: (widget.postData['caption'] == null)
-                    ? ""
-                    : widget.postData['caption'],
-                imagePath: widget.postData['imageFile'],
-                timestamp: widget.postData['timestamp']);
+            return ImagePost(postInfo: widget.postData);
+
           },
           'video': (BuildContext context) {
             // return Text("video post");
@@ -44,13 +39,7 @@ class PostRendererState extends State<PostRenderer> {
             //   height:50,
             //   child:Center(child: Text('${widget.postData['timestamp']}')),
             // );
-            return VideoPost(
-                username: (widget.postData['username']),
-                caption: (widget.postData['caption'] == null)
-                    ? ""
-                    : widget.postData['caption'],
-                videoPath: widget.postData['videoFile'],
-                timestamp: widget.postData['timestamp']);
+            return VideoPost(postInfo: widget.postData);
           },
           'location': (BuildContext context) {
             // return Text("location post");
@@ -59,12 +48,7 @@ class PostRendererState extends State<PostRenderer> {
             //   child:Center(child: Text('${widget.postData['timestamp']}')),
             // );
             return LocationPost(
-                username: (widget.postData['username']),
-                caption: (widget.postData['caption'] == null)
-                    ? ""
-                    : widget.postData['caption'],
-                location: widget.postData['address'],
-                timestamp: widget.postData['timestamp']);
+                postInfo: widget.postData);
           },
           'caption': (BuildContext context) {
             // return Text("caption post");
@@ -73,9 +57,7 @@ class PostRendererState extends State<PostRenderer> {
             //   child:Center(child: Text('${widget.postData['timestamp']}')),
             // );
             return CaptionPost(
-                username: (widget.postData['username']),
-                caption: widget.postData['caption'],
-                timestamp: widget.postData['timestamp']);
+                postInfo: widget.postData);
           },
         },
         fallbackBuilder: (BuildContext context) =>

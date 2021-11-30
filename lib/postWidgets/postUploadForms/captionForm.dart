@@ -1,30 +1,38 @@
-import 'package:capstone/utilWidgets/placeSuggestionField.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
-class LocationForm extends StatefulWidget {
-  const LocationForm({Key? key, required this.user}) : super(key: key);
+//registration form for a Creator
+//fields:
+//username
+//email
+//password
+//address (used for proximity to users that are exploring on map or explore page)
+class CaptionForm extends StatefulWidget {
+  const CaptionForm({Key? key, required this.user}) : super(key: key);
   final user;
-  final formType = 'location';//IMPORTANT FOR DECIDING HOW TO PRESENT POST, EACH FORM HAS A POST TYPE
+  final formType = 'caption';//IMPORTANT FOR DECIDING HOW TO PRESENT POST, EACH FORM HAS A POST TYPE
   @override
-  LocationFormState createState() {
-    return LocationFormState();
+  CaptionFormState createState() {
+    return CaptionFormState();
   }
 }
 
-class LocationFormState extends State<LocationForm> {
+//state implementation of Creator form
+//Value fields:
+// String username;
+// String email;
+// String password;
+// String address;
+class CaptionFormState extends State<CaptionForm> {
   var caption;
-  var address;
   var userDoc;//used to get needed information from user's account(username specifically)
   final captionController = TextEditingController();
-  final addressController = TextEditingController();
+
   @override
   void dispose() {
     captionController.dispose();
-    addressController.dispose();
     super.dispose();
   }
 
@@ -33,7 +41,6 @@ class LocationFormState extends State<LocationForm> {
   @override
   void initState() {
     captionController.addListener(setCaption);
-    addressController.addListener(setAddress);
     super.initState();
   }
 
@@ -43,51 +50,33 @@ class LocationFormState extends State<LocationForm> {
     caption = captionController.text;
   }
 
-  void setAddress() {
-    address = addressController.text;
-  }
-
   //Add extended creator credentials in doc where docId = email
   Future<bool> addPost() async {
     var userData =  await FirebaseFirestore.instance.collection('creators').doc(widget.user.email).get();
-    userDoc = userData;
+      userDoc = userData;
     CollectionReference userPostCollection =
     FirebaseFirestore.instance.collection('creators').doc(widget.user.email).collection("myposts");
     try {
-      // print(userDoc);
       userPostCollection
           .doc()
           .set({
-        'username' : userDoc.data()['username'],//gets the username from the users doc in firebase
-        'postType' : widget.formType,
-        'timestamp' : DateTime.now(),
-        'caption': caption,
-        'address': address,
-        })
-          .then((value) => print("Location post Added"))
-          .catchError((error) =>
-          print("Failed to add user: $error")
-
-      );
-      //place locationPosts in seperate collection for querying proximity in explore page
-      CollectionReference locationCollection = FirebaseFirestore.instance.collection('locationPosts');
-      locationCollection.doc().set({
         'email' : widget.user.email,
         'username' : userDoc.data()['username'],//gets the username from the users doc in firebase
         'postType' : widget.formType,
         'timestamp' : DateTime.now(),
-        'caption': caption,
-        'address': address,
-      });
+        'caption' : caption,
+      })
+          .then((value) => print("Caption post added"))
+          .catchError((error) =>
+          print("Failed to add user: $error")
+
+      );
       return Future<bool>.value(true);
     } catch (e) {
       print(e);
     }
     return Future<bool>.value(false);
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +89,7 @@ class LocationFormState extends State<LocationForm> {
             textAlign: TextAlign.center,
             text: TextSpan(children: [
               TextSpan(
-                  text: 'Location Post',
+                  text: 'Caption Post',
                   style: GoogleFonts.abhayaLibre(
                       textStyle: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -124,8 +113,8 @@ class LocationFormState extends State<LocationForm> {
                 //form field for email
                 Padding(
                     padding: EdgeInsets.all(10),
+                    child: Focus(
                         child: TextFormField(
-
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           controller: captionController,
                           onChanged: (text) {
@@ -135,16 +124,23 @@ class LocationFormState extends State<LocationForm> {
                             fillColor: Colors.white,
                             filled: true,
                             border: OutlineInputBorder(),
-                            labelText: 'Caption(optional)',
+                            labelText: 'Caption',
                           ),
-                            //no validators currently because caption is optional
+                          //validators, isEmpty, is valid email, is unique email
                           validator: (value) {
-                            // return null;
+                            if (value == null || value.isEmpty) {
+                              return "Caption is required";
+                            }
                           }
-                        )),
-                Padding(
-                    padding: EdgeInsets.all(10),
-                    child: PlaceSuggestionField(addressController)),
+
+                          //
+                          //   if(emailAlreadyExists(value)){
+                          //     return "Email already exists";
+                          //   }
+                          //   return null;
+                          // }
+                        ))),
+                //form field for username (optional)
                 Padding(
                     padding: EdgeInsets.all(10),
                     child: ElevatedButton(
@@ -161,8 +157,9 @@ class LocationFormState extends State<LocationForm> {
                           );
                           bool success = await addPost();
                           if (success) {
+
                             ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Post Successful')),
+                              const SnackBar(content: Text('Post Successful')),
                             );
                             Navigator.pop(context);
                           } else {

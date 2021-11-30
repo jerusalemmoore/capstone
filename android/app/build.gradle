@@ -50,6 +50,10 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+//    this might not do anything, I was trying to debug image picker for videos
+    lintOptions {
+        checkReleaseBuilds false
+    }
 }
 
 flutter {

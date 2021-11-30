@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
-import '../postWidgets/explorePostRenderer.dart';
+import 'explorePostRenderer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'postRenderer.dart';
-import '../mapWidget.dart';
+import '../pageWidgets/homeWidgets/mapWidget.dart';
 
 class ExplorePostsBuilder extends StatefulWidget {
   const ExplorePostsBuilder({Key? key, required this.user}) : super(key: key);
@@ -213,6 +213,7 @@ AutomaticKeepAliveClientMixin<ExplorePostsBuilder>{
                         } else {
                           return ListView.builder(
                             // itemExtent: 3,
+                              cacheExtent: 1000,
                               shrinkWrap: true,
                               addAutomaticKeepAlives: true,
                               physics: NeverScrollableScrollPhysics(),

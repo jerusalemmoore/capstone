@@ -129,6 +129,7 @@ class ImageFormState extends State<ImageForm> {
       await userPostCollection
           .doc()
           .set({
+        'email' : widget.user.email,
         'username' : userDoc.data()['username'],//gets the username from the users doc in firebase
         'postType' : widget.formType,
         'timestamp' : DateTime.now(),

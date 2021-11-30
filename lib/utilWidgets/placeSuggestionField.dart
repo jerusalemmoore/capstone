@@ -1,6 +1,7 @@
 //This is a simple widget that produces location suggestions as user types into form field
 //requires a controller that will be used for form field
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_place/google_place.dart';
 
 class PlaceSuggestionField extends StatefulWidget {
@@ -16,6 +17,7 @@ class PlaceSuggestionField extends StatefulWidget {
 
 class PlaceSuggestionFieldState extends State<PlaceSuggestionField> {
   String? apiKey = 'AIzaSyA8Xbu1XqgRojK9auDk7QDmsWB64HiuEyo';
+  bool listVisible = false;
   late GooglePlace googlePlace;
   List<AutocompletePrediction> predictions = [];//list to hold suggestions
   @override
@@ -43,6 +45,7 @@ class PlaceSuggestionFieldState extends State<PlaceSuggestionField> {
         predictions = result.predictions!;
       });
     }
+    listVisible = true;
   }
 
   @override
@@ -89,37 +92,47 @@ class PlaceSuggestionFieldState extends State<PlaceSuggestionField> {
                 //   child:
                 //print size of this list to make sure all suggestions show up
                 SingleChildScrollView(
-                  child: ListView.builder(
-                    physics: ScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: predictions.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border:
+                  child: Visibility(
+                    visible: listVisible,
+                    child: ListView.builder(
+                      physics: ScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: predictions.length,
+                      itemBuilder: (context, index) {
+                        return Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                                  color: Colors.blue,
+                                  border:
                                   Border.all(color: Colors.black, width: 4)),
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              child: Icon(
-                                Icons.pin_drop,
-                                color: Colors.white,
-                              ),
-                            ),
-                            title: Text(
-                                predictions[index].description ?? "Nothing"),
-                            onTap: () {
-                              widget.addressController.text =
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  child: Icon(
+                                    Icons.pin_drop,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                title: Text(
+                                    predictions[index].description ?? "Nothing",
+                                    style: GoogleFonts.abhayaLibre(
+                                        textStyle: TextStyle(
+                                          // fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          fontSize: 17,
+                                        ))),
+                                onTap: () {
+                                  widget.addressController.text =
                                   predictions[index].description!;
-                              //empty predictions since user selected address
-                              // setState(() {
-                              //   predictions.clear();
-                              //
-                              // });
-                            },
-                          ));
-                    },
-                  ),
+                                  setState((){
+                                    listVisible = false;
+                                  });
+                                },
+                              ))
+                        );
+                      },
+                    ),
+                  )
                 )
               ],
             ),

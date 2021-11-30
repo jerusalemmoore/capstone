@@ -1,38 +1,30 @@
+import 'package:capstone/utilWidgets/placeSuggestionField.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-//registration form for a Creator
-//fields:
-//username
-//email
-//password
-//address (used for proximity to users that are exploring on map or explore page)
-class CaptionForm extends StatefulWidget {
-  const CaptionForm({Key? key, required this.user}) : super(key: key);
+
+class LocationForm extends StatefulWidget {
+  const LocationForm({Key? key, required this.user}) : super(key: key);
   final user;
-  final formType = 'caption';//IMPORTANT FOR DECIDING HOW TO PRESENT POST, EACH FORM HAS A POST TYPE
+  final formType = 'location';//IMPORTANT FOR DECIDING HOW TO PRESENT POST, EACH FORM HAS A POST TYPE
   @override
-  CaptionFormState createState() {
-    return CaptionFormState();
+  LocationFormState createState() {
+    return LocationFormState();
   }
 }
 
-//state implementation of Creator form
-//Value fields:
-// String username;
-// String email;
-// String password;
-// String address;
-class CaptionFormState extends State<CaptionForm> {
+class LocationFormState extends State<LocationForm> {
   var caption;
+  var address;
   var userDoc;//used to get needed information from user's account(username specifically)
   final captionController = TextEditingController();
-
+  final addressController = TextEditingController();
   @override
   void dispose() {
     captionController.dispose();
+    addressController.dispose();
     super.dispose();
   }
 
@@ -41,6 +33,7 @@ class CaptionFormState extends State<CaptionForm> {
   @override
   void initState() {
     captionController.addListener(setCaption);
+    addressController.addListener(setAddress);
     super.initState();
   }
 
@@ -50,32 +43,52 @@ class CaptionFormState extends State<CaptionForm> {
     caption = captionController.text;
   }
 
+  void setAddress() {
+    address = addressController.text;
+  }
+
   //Add extended creator credentials in doc where docId = email
   Future<bool> addPost() async {
     var userData =  await FirebaseFirestore.instance.collection('creators').doc(widget.user.email).get();
-      userDoc = userData;
+    userDoc = userData;
     CollectionReference userPostCollection =
     FirebaseFirestore.instance.collection('creators').doc(widget.user.email).collection("myposts");
     try {
+      // print(userDoc);
       userPostCollection
           .doc()
           .set({
+        'email' : widget.user.email,
         'username' : userDoc.data()['username'],//gets the username from the users doc in firebase
         'postType' : widget.formType,
         'timestamp' : DateTime.now(),
-        'caption' : caption,
-      })
-          .then((value) => print("Caption post added"))
+        'caption': caption,
+        'address': address,
+        })
+          .then((value) => print("Location post Added"))
           .catchError((error) =>
           print("Failed to add user: $error")
 
       );
+      //place locationPosts in seperate collection for querying proximity in explore page
+      CollectionReference locationCollection = FirebaseFirestore.instance.collection('locationPosts');
+      locationCollection.doc().set({
+        'email' : widget.user.email,
+        'username' : userDoc.data()['username'],//gets the username from the users doc in firebase
+        'postType' : widget.formType,
+        'timestamp' : DateTime.now(),
+        'caption': caption,
+        'address': address,
+      });
       return Future<bool>.value(true);
     } catch (e) {
       print(e);
     }
     return Future<bool>.value(false);
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +101,7 @@ class CaptionFormState extends State<CaptionForm> {
             textAlign: TextAlign.center,
             text: TextSpan(children: [
               TextSpan(
-                  text: 'Caption Post',
+                  text: 'Location Post',
                   style: GoogleFonts.abhayaLibre(
                       textStyle: TextStyle(
                         fontWeight: FontWeight.bold,
@@ -112,8 +125,8 @@ class CaptionFormState extends State<CaptionForm> {
                 //form field for email
                 Padding(
                     padding: EdgeInsets.all(10),
-                    child: Focus(
                         child: TextFormField(
+
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           controller: captionController,
                           onChanged: (text) {
@@ -123,23 +136,16 @@ class CaptionFormState extends State<CaptionForm> {
                             fillColor: Colors.white,
                             filled: true,
                             border: OutlineInputBorder(),
-                            labelText: 'Caption',
+                            labelText: 'Caption(optional)',
                           ),
-                          //validators, isEmpty, is valid email, is unique email
+                            //no validators currently because caption is optional
                           validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Caption is required";
-                            }
+                            // return null;
                           }
-
-                          //
-                          //   if(emailAlreadyExists(value)){
-                          //     return "Email already exists";
-                          //   }
-                          //   return null;
-                          // }
-                        ))),
-                //form field for username (optional)
+                        )),
+                Padding(
+                    padding: EdgeInsets.all(10),
+                    child: PlaceSuggestionField(addressController)),
                 Padding(
                     padding: EdgeInsets.all(10),
                     child: ElevatedButton(
@@ -156,9 +162,8 @@ class CaptionFormState extends State<CaptionForm> {
                           );
                           bool success = await addPost();
                           if (success) {
-
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Post Successful')),
+                                const SnackBar(content: Text('Post Successful')),
                             );
                             Navigator.pop(context);
                           } else {

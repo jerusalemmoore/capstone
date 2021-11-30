@@ -1,16 +1,16 @@
-import 'package:capstone/pageWidgets/registration/registerCreator.dart';
-import 'package:firebase_core/firebase_core.dart';
+//Implementation of general scaffold to hold elements for pages
+//explore page
+//home page
+//map page
+//Contains scaffold settings and buttons for creating posts
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/gestures.dart';
-import 'homeScaffold.dart';
 import 'homeMain.dart';
 import 'mapWidget.dart';
 import 'exploreWidget.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'postWidgets/postPage.dart';
+import '../../../postWidgets/postPage.dart';
 
 class HomeScaffold extends StatefulWidget {
   const HomeScaffold({Key? key, required this.title}) : super(key: key);

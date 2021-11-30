@@ -1,4 +1,6 @@
-import 'package:capstone/pageWidgets/homeWidgets/postWidgets/postsBuilder.dart';
+//Implementation of page that presents current users home page
+//includes user info bar and their posts
+import '../../../postWidgets/postsBuilder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,13 +26,12 @@ class HomeMainWidgetState extends State<HomeMainWidget> {
       username = snapshot['username'];
     });
   }
-
+  @override
   initState() {
     getUserInfo();
     super.initState();
   }
 
-  //return a future builder instead
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -62,7 +63,6 @@ class HomeMainWidgetState extends State<HomeMainWidget> {
                                     style: TextStyle(
                                         fontSize: 20, color: Colors.white))))
 
-                        //     )
                       ])
                     ]),
                     decoration: BoxDecoration(color: Colors.blue, boxShadow: [
@@ -75,11 +75,9 @@ class HomeMainWidgetState extends State<HomeMainWidget> {
                   child: DraggableScrollableSheet(
                       initialChildSize: 1,
                       builder: (context, scrollController) {
-                        return PostsBuilder(user: widget.user);
+                        return PostsBuilder(userEmail: widget.user.email);
                       }),
                 )
-
-                //put posted objects here
               ],
             ));
           } else {
