@@ -43,7 +43,7 @@ class MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixin
 
   @override
   void initState() {
-
+    //colect location posts
     CollectionReference locationPostsReference = FirebaseFirestore.instance.collection('locationPosts');
     locationPostsReference.snapshots().listen((querySnapshot){
       querySnapshot.docs.forEach((doc) async {
@@ -65,7 +65,7 @@ class MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixin
                   print(doc['email']);
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => OtherUserWidget(email: doc['email'])),
+                    MaterialPageRoute(builder: (context) => OtherUserWidget(userEmail: doc['email'])),
                   );
                 }
               ));
@@ -174,13 +174,25 @@ class MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixin
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // print(snapshot.data[0]);
-            return  GoogleMap(
+            return  Stack(
+              children: [
+                GoogleMap(
                 myLocationEnabled: true,
                 myLocationButtonEnabled: true,
                 onMapCreated: _onMapCreated,
                 initialCameraPosition:
-                    CameraPosition(target: _center, zoom: 15),
-                markers: markers.toSet());
+                CameraPosition(target: _center, zoom: 15),
+                markers: markers.toSet()),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child:ElevatedButton(onPressed: (){
+                    setState(() {
+
+                    });
+                  }, child: Text("Refresh"))
+                )
+              ]
+            );
           } else if (snapshot.hasError) {
             return Text("Error");
           } else {

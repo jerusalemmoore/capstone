@@ -73,7 +73,7 @@ class HomeMainWidgetState extends State<HomeMainWidget> with AutomaticKeepAliveC
                     child: Column(children: [
                       Row(children: [
                         Padding(
-                          padding: EdgeInsets.fromLTRB(10, 20, 20, 0),
+                          padding: EdgeInsets.fromLTRB(10, 0, 20, 0),
                           child: CircleAvatar(
                               backgroundColor: Colors.lightBlueAccent,
                               foregroundColor: Colors.white,
@@ -96,12 +96,13 @@ class HomeMainWidgetState extends State<HomeMainWidget> with AutomaticKeepAliveC
                                 Padding(
                                   padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
                                   child:TextFormField(
+                                    cursorColor: Colors.white,
                                     style: TextStyle(
                                       fontSize: 15, color: Colors.white
                                     ),
                                     focusNode: focusNode,
                                     // initialValue: aboutString == null? '' : aboutString,
-                                    textInputAction: TextInputAction.done,
+                                    textInputAction: TextInputAction.newline,
                                     controller: aboutController,
                                     onTap: () {
                                       //this will save input from about form when user taps text box to unfocus

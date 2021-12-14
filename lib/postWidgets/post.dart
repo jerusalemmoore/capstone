@@ -109,13 +109,10 @@ class CaptionPostState extends State<CaptionPost> {
                                       if (!(widget.postInfo['email'] ==
                                           FirebaseAuth
                                               .instance.currentUser!.email)) {
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    OtherUserWidget(
-                                                        email: widget.postInfo[
-                                                            'email'])));
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => OtherUserWidget(userEmail: widget.postInfo['email'])),
+                                        );
                                       }
                                     },
                                   text: '${widget.postInfo['username']}',
@@ -521,7 +518,7 @@ class ImagePostState extends State<ImagePost> {
                   return AspectRatio(
                       aspectRatio: 16 / 9,
                       child: Center(child: CircularProgressIndicator()));
-                  ;
+
                 }
               }),
           // Text(widget.imagePath),

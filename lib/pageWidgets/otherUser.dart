@@ -9,27 +9,30 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:image_picker/image_picker.dart';
 
 class OtherUserWidget extends StatefulWidget {
-  const OtherUserWidget({Key? key, required this.email}) : super(key: key);
-  final email;
+  const OtherUserWidget({Key? key, required this.userEmail}) : super(key: key);
+  final userEmail;
 
   @override
   OtherUserWidgetState createState() => OtherUserWidgetState();
 }
 
 class OtherUserWidgetState extends State<OtherUserWidget> {
-  var username;
+  // var username;
   var userInfo;
   //get user info using their email in collection 'creators'
   //get other users username
   Future<void> getUserInfo() async {
     // print(widget.email);
-    await FirebaseFirestore.instance
+    CollectionReference users = FirebaseFirestore.instance.collection('users');
+    // print(widget.email);
+    userInfo = await FirebaseFirestore.instance
         .collection('creators')
-        .doc(widget.email)
-        .get()
-        .then((DocumentSnapshot snapshot) {
-      username = snapshot['username'];
-    });
+        .doc(widget.userEmail)
+        .get();
+    //     .then((DocumentSnapshot snapshot) {
+    //   username = snapshot['username'];
+    // }
+    // );
   // print(userInfo);
   }
 
@@ -83,20 +86,91 @@ class OtherUserWidgetState extends State<OtherUserWidget> {
                         child: Column(children: [
                           Row(children: [
                             Padding(
-                              padding: EdgeInsets.fromLTRB(10, 20, 20, 0),
+                              padding: EdgeInsets.fromLTRB(10,0 , 20, 0),
                               child: CircleAvatar(
                                   backgroundColor: Colors.lightBlueAccent,
                                   foregroundColor: Colors.white,
                                   radius: 50,
-                                  child: Text('${username[0].toUpperCase()}',
+                                  child: Text('${userInfo['username'][0].toUpperCase()}',
                                       style: TextStyle(fontSize: 30))),
                             ),
                             Expanded(
-                                child: Padding(
-                                    padding: EdgeInsets.only(bottom: 20),
-                                    child: Text("$username",
-                                        style: TextStyle(
-                                            fontSize: 20, color: Colors.white))))
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                        padding: EdgeInsets.fromLTRB(20,20,0,10),
+                                        child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child:Text("${userInfo['username']}",
+                                                style: TextStyle(
+                                                    fontSize: 20, color: Colors.white))
+                                        )
+                                    ),
+                                    Padding(
+                                        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                        child: TextFormField(
+                                            cursorColor: Colors.white,
+                                            style: TextStyle(
+                                                fontSize: 15, color: Colors.white
+                                            ),
+                                            // enabled: false,
+                                            initialValue: userInfo['about'] == null? '' : userInfo['about'],
+
+
+
+                                            //this will save input from about form when user taps enter on keyboard
+                                            readOnly: true,
+                                            maxLines:3,
+                                            keyboardType: TextInputType.multiline,
+                                            decoration:  InputDecoration(
+                                              hintText:  "Include info you'd like others to know about you here",
+                                              enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(color:Colors.blue, width: 1.0),),
+
+
+                                            )
+                                        )
+                                        // TextFormField(
+                                        //     cursorColor: Colors.white,
+                                        //     style: TextStyle(
+                                        //         fontSize: 15, color: Colors.white
+                                        //     ),
+                                        //     focusNode: focusNode,
+                                        //     // initialValue: aboutString == null? '' : aboutString,
+                                        //     textInputAction: TextInputAction.done,
+                                        //     controller: aboutController,
+                                        //     onTap: () {
+                                        //       //this will save input from about form when user taps text box to unfocus
+                                        //       if(focusNode.hasFocus){
+                                        //         focusNode.unfocus();
+                                        //         saveAboutInfo(aboutController.text);
+                                        //
+                                        //       }
+                                        //     },
+                                        //     //this will save input from about form when user taps enter on keyboard
+                                        //     onFieldSubmitted: (value){
+                                        //       saveAboutInfo(value);
+                                        //     },
+                                        //     maxLines:3,
+                                        //     keyboardType: TextInputType.multiline,
+                                        //     decoration:  InputDecoration(
+                                        //       hintText:  "Include info you'd like others to know about you here",
+                                        //       enabledBorder: OutlineInputBorder(
+                                        //         borderSide: BorderSide(color:Colors.blue, width: 1.0),),
+                                        //
+                                        //       focusedBorder: OutlineInputBorder(
+                                        //         borderSide: BorderSide(color: Colors.white, width: 2.0),
+                                        //       ),
+                                        //     )
+                                        // )
+                                    )
+                                  ]
+                                ))
+                                // Padding(
+                                //     padding: EdgeInsets.only(bottom: 20),
+                                //     child: Text("$username",
+                                //         style: TextStyle(
+                                //             fontSize: 20, color: Colors.white))))
 
                             //     )
                           ])
@@ -111,7 +185,7 @@ class OtherUserWidgetState extends State<OtherUserWidget> {
                     Expanded(
                       child: SingleChildScrollView(
                           physics:AlwaysScrollableScrollPhysics(parent:BouncingScrollPhysics()),
-                          child: PostsBuilder(userEmail: widget.email)
+                          child: PostsBuilder(userEmail: userInfo['email'])
                       ),
                     )
 

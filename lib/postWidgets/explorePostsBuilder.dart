@@ -197,6 +197,10 @@ AutomaticKeepAliveClientMixin<ExplorePostsBuilder>{
                 //for each user doc get their collection of posts
                 print('${usersAndDists.data[userIter][1].data()['postType']}\n');
                 print('${(usersAndDists.data[userIter][1].data()['postType']).runtimeType}\n');
+                print(usersAndDists.data!.length);
+                // if(usersAndDists.data! == Null){
+                //   return Text("No creators with content available:(");
+                // }
                 if(usersAndDists.data[userIter][1].data()['postType'] == (null)){
                   return StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
@@ -212,7 +216,8 @@ AutomaticKeepAliveClientMixin<ExplorePostsBuilder>{
                           AsyncSnapshot<QuerySnapshot> postsSnapshot) {
                         var collectionInstance = postsSnapshot.data;
                         if (collectionInstance == null) {
-                          return SizedBox.shrink();
+                          // return SizedBox.shrink();
+                          return Text("No creators with content available:(");
                         } else {
                           return ListView.builder(
                             // itemExtent: 3,
