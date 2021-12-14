@@ -112,9 +112,9 @@ class ImageFormState extends State<ImageForm> {
     CollectionReference userPostCollection =
     FirebaseFirestore.instance.collection('creators').doc(widget.user.email).collection("myposts");
 
-    Directory appDocDir = await  getApplicationDocumentsDirectory();
-    String fileName = basename(imageFile.path);
-    String filePath = '${appDocDir.absolute}/$fileName';
+    String fileName = basename(imageFile!.path);//name of new image file
+    String baseName = 'creators/${userDoc.data()['username']}/images';
+    String filePath = '$baseName/$fileName';
     try{
       await firebase_storage.FirebaseStorage.instance
           .ref('$filePath')
@@ -149,9 +149,9 @@ class ImageFormState extends State<ImageForm> {
     }
     if(errorFound){
       print("Error uploading image post to firebase");
-      return Future<bool>.value(false);
+      return false;
     }
-    return Future<bool>.value(true);
+    return true;
   }
 
   @override
@@ -250,14 +250,17 @@ class ImageFormState extends State<ImageForm> {
 
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Post Successful')),
+                                // Navigator.popUntil(context, ModalRoute.withName("userHome"));
+
                               );
-                              Navigator.popUntil(context, ModalRoute.withName("userHome"));
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Error processing data')),
+                                const SnackBar(content: Text('Error processing data, try again')),
                               );
                             }
                           }
+                          Navigator.pop(context);
+
                         }
 
                       },

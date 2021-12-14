@@ -21,7 +21,7 @@ class HomeScaffold extends StatefulWidget {
   }
 }
 
-class HomeScaffoldState extends State<HomeScaffold> {
+class HomeScaffoldState extends State<HomeScaffold>  {
   int screenIndex = 0;
   List<Widget>? widgetPages;
   PageController? _pageController;
@@ -66,6 +66,8 @@ class HomeScaffoldState extends State<HomeScaffold> {
 
   @override
   Widget build(BuildContext context) {
+    //for automatic keepalive
+    // super.build(context);
     return Scaffold(
       floatingActionButton: Visibility(
         visible: screenIndex == 0 ? true : false,
@@ -228,4 +230,8 @@ class HomeScaffoldState extends State<HomeScaffold> {
       ),
     );
   }
+
+  // @override
+
+  // bool get wantKeepAlive => true;
 }

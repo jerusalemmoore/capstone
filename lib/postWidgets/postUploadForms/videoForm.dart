@@ -74,7 +74,9 @@ class VideoFormState extends State<VideoForm> {
     }
     return Padding(
       padding: const EdgeInsets.all(10.0),
-      child: AspectRatioVideo(_controller),
+      child: AspectRatio(
+          aspectRatio: 16/9,
+          child: VideoPlayer(_controller!)),
     );
   }
   Future<void> _disposeVideoController() async {
@@ -114,7 +116,7 @@ class VideoFormState extends State<VideoForm> {
   }
   @override
   void dispose() {
-    _disposeVideoController();
+    _controller!.dispose();
     captionController.dispose();
     super.dispose();
   }
@@ -141,16 +143,17 @@ class VideoFormState extends State<VideoForm> {
     CollectionReference userPostCollection =
     FirebaseFirestore.instance.collection('creators').doc(widget.user.email).collection("myposts");
 
-    Directory appDocDir = await  getApplicationDocumentsDirectory();
-    String fileName = basename(videoFile!.path);
-    String filePath = '${appDocDir.absolute}/$fileName';
+    // Directory appDocDir = await  getApplicationDocumentsDirectory();
+    String fileName = basename(videoFile!.path);//name of new image file
+    String baseName = 'creators/${userDoc.data()['username']}/videos';
+    String filePath = '$baseName/$fileName';
     try{
       await firebase_storage.FirebaseStorage.instance
           .ref('$filePath')
           .putFile(File(videoFile!.path));
     } on FirebaseException catch (e) {
       // e.g, e.code == 'canceled'
-      print(e);
+      print("ERROR UPLOADING TO STORAGE, ERROR $e");
     }
 
 
@@ -167,7 +170,7 @@ class VideoFormState extends State<VideoForm> {
       })
           .then((value) => print("Caption post added"))
           .catchError((error) =>{
-        print("Failed to add user: $error"),
+        print("Failed to add video post: $error"),
         errorFound = true
       }
 
@@ -177,10 +180,10 @@ class VideoFormState extends State<VideoForm> {
       print(e);
     }
     if(errorFound){
-      print("Error uploading image post to firebase");
-      return Future<bool>.value(false);
+      print("Error uploading video post to firebase: Error $errorFound");
+      return false;
     }
-    return Future<bool>.value(true);
+    return true;
   }
 
   @override
@@ -231,19 +234,10 @@ class VideoFormState extends State<VideoForm> {
                               border: OutlineInputBorder(),
                               labelText: 'Caption',
                             ),
-                            //validators, isEmpty, is valid email, is unique email
+                            //validators for video caption if needed
                             validator: (value) {
-                              // if (value == null || value.isEmpty) {
-                              //   return "Caption is required";
-                              // }
-                            }
 
-                          //
-                          //   if(emailAlreadyExists(value)){
-                          //     return "Email already exists";
-                          //   }
-                          //   return null;
-                          // }
+                            }
                         ))),
 
                 Column(
@@ -280,7 +274,8 @@ class VideoFormState extends State<VideoForm> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Post Successful')),
                               );
-                              Navigator.popUntil(context, ModalRoute.withName("userHome"));
+                              // Navigator.popUntil(context, ModalRoute.withName("userHome"));
+                              // Navigator.popUntil(context, ModalRoute.withName("userHome"));
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(content: Text('Error processing data')),
@@ -288,6 +283,7 @@ class VideoFormState extends State<VideoForm> {
                             }
                           }
                         }
+                        Navigator.pop(context);
 
                       },
                       child: Text('Post'),
@@ -297,54 +293,5 @@ class VideoFormState extends State<VideoForm> {
             ),
           )),
     ]);
-  }
-}
-class AspectRatioVideo extends StatefulWidget {
-  AspectRatioVideo(this.controller);
-
-  final VideoPlayerController? controller;
-
-  @override
-  AspectRatioVideoState createState() => AspectRatioVideoState();
-}
-class AspectRatioVideoState extends State<AspectRatioVideo> {
-  VideoPlayerController? get controller => widget.controller;
-  bool initialized = false;
-
-  void _onVideoControllerUpdate() {
-    if (!mounted) {
-      return;
-    }
-    if (initialized != controller!.value.isInitialized) {
-      initialized = controller!.value.isInitialized;
-      setState(() {});
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    controller!.addListener(_onVideoControllerUpdate);
-  }
-
-  @override
-  void dispose() {
-    controller!.removeListener(_onVideoControllerUpdate);
-    controller!.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (initialized) {
-      return Center(
-        child: AspectRatio(
-          aspectRatio: controller!.value.aspectRatio,
-          child: VideoPlayer(controller!),
-        ),
-      );
-    } else {
-      return Container();
-    }
   }
 }

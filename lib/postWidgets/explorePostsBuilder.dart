@@ -89,8 +89,8 @@ AutomaticKeepAliveClientMixin<ExplorePostsBuilder>{
         print("success loading pos");
         currentPosition = await Geolocator.getCurrentPosition(
             forceAndroidLocationManager: true);
-        // print("lat ${currentPosition.latitude}");
-        // print("long ${currentPosition.longitude}");
+        print("lat ${currentPosition.latitude}");
+        print("long ${currentPosition.longitude}");
         return;
         // _center = LatLng(currentPosition.latitude, currentPosition.longitude);
       } else {
@@ -104,8 +104,8 @@ AutomaticKeepAliveClientMixin<ExplorePostsBuilder>{
 
   @override
   void initState() {
-    // usersLocationsAndDists.clear();
-    // posts.clear();
+    usersLocationsAndDists.clear();
+    posts.clear();
     super.initState();
   }
 
@@ -120,8 +120,8 @@ AutomaticKeepAliveClientMixin<ExplorePostsBuilder>{
       // print('yes');
       // setState((){
       // locationPosts.clear();
-      // usersLocationsAndDists.clear();
-      // posts.clear();
+      usersLocationsAndDists.clear();
+      posts.clear();
       // });
       await FirebaseFirestore.instance
           .collection('creators')
@@ -178,20 +178,25 @@ AutomaticKeepAliveClientMixin<ExplorePostsBuilder>{
     super.build(context);//this was for keepalive, might be pointless
     return FutureBuilder<List>(
       future: retrievePosts(), //get all userdocs
+      //usersAndDists is a list of lists holding distance to user in index 0 and
+      //the user doc in index 1
       builder: (BuildContext context, AsyncSnapshot usersAndDists) {
         if (usersAndDists.connectionState == ConnectionState.done) {
+          // print(usersAndDists.data);
           // query example to get documents address field from postsAndDists snapshot: snapshot.data[index][1].data()['address']
+          // return Text('${snapshot.data[index][1].data()['address']}');
           return ListView.builder(
               //view builder to display info form each users doc
-              // physics: NeverScrollableScrollPhysics(),
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
               itemCount: usersAndDists.data!.length, //number of users
               itemBuilder: (context, userIter) {
                 // query example to get documents address field from postsAndDists snapshot: snapshot.data[index][1].data()['address']
                 // var userPosts = snapshot.data[index][1].get().collection('myposts');
                 // return Text('${snapshot.data[index][1].data()['address']}');
                 //for each user doc get their collection of posts
-                // print('${usersAndDists.data[userIter][1].data()['postType']}\n');
-                // print('${(usersAndDists.data[userIter][1].data()['postType']).runtimeType}\n');
+                print('${usersAndDists.data[userIter][1].data()['postType']}\n');
+                print('${(usersAndDists.data[userIter][1].data()['postType']).runtimeType}\n');
                 if(usersAndDists.data[userIter][1].data()['postType'] == (null)){
                   return StreamBuilder<QuerySnapshot>(
                       stream: FirebaseFirestore.instance
@@ -238,7 +243,7 @@ AutomaticKeepAliveClientMixin<ExplorePostsBuilder>{
                 }
                 else{
                   // return Text("location");
-                  print('other list ${usersAndDists.data[userIter][1]}');
+                  // print('other list ${usersAndDists.data[userIter][1]}');
                   return ExplorePostRenderer(
                     postData: usersAndDists.data[userIter][1],
                     distFromUser: usersAndDists.data[userIter][0]
@@ -248,11 +253,12 @@ AutomaticKeepAliveClientMixin<ExplorePostsBuilder>{
               });
         } else {
           // print(snapshot);
-          return Column(children: <Widget>[
-            Spacer(),
-            CircularProgressIndicator(),
-            Spacer()
-          ]);
+          return CircularProgressIndicator();
+          //   Column(children: <Widget>[
+          //   Spacer(),
+          //   CircularProgressIndicator(),
+          //   Spacer()
+          // ]);
         }
       },
     );

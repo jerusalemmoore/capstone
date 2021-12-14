@@ -13,7 +13,8 @@ class PostsBuilder extends StatefulWidget {
   PostsBuilderState createState() => PostsBuilderState();
 }
 
-class PostsBuilderState extends State<PostsBuilder> {
+class PostsBuilderState extends State<PostsBuilder> with
+AutomaticKeepAliveClientMixin<PostsBuilder>{
   var posts = [];
   @override
   void dispose() {
@@ -37,9 +38,12 @@ class PostsBuilderState extends State<PostsBuilder> {
       });
     });
   }
+  bool get wantKeepAlive=> true;//this was for keepalive, might be pointless
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);//this was for keepalive, might be pointless
+
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('creators')
@@ -52,12 +56,39 @@ class PostsBuilderState extends State<PostsBuilder> {
           print(widget.userEmail);
           print(snapshot);
           if (snapshot.data!.size.toString() == '0') {
-            return Center(child: Text("No Posts"));
+            return Center(child:Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(15),
+                  child:Text("No Posts in your gallery",
+                      textAlign: TextAlign.center),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(15),
+                  child:   Text("Let people know you're on the app with a caption post",
+                      textAlign: TextAlign.center),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(15),
+                  child:Text("Or Post an image or video advertising your work",
+                      textAlign: TextAlign.center),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(15),
+                  child:Text("Hosting an event? Post the location to let people near you know where",
+                      textAlign: TextAlign.center)
+                ),
+
+
+              ]
+            ) );
           }
           else{
             return ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               // cacheExtent: 1000,
-                addAutomaticKeepAlives: false,
+              //   addAutomaticKeepAlives: false,
                 itemCount: snapshot.data!.size,
                 itemBuilder: (context, index) {
                   List docs = snapshot.data!.docs;
@@ -66,9 +97,9 @@ class PostsBuilderState extends State<PostsBuilder> {
           }
         } else {
           return Column(children: <Widget>[
-            Spacer(),
+            // Spacer(),
             CircularProgressIndicator(),
-            Spacer()
+            // Spacer()
           ]);
         }
       },

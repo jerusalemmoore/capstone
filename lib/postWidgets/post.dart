@@ -7,8 +7,11 @@
 // image post
 // video post
 
+import 'package:capstone/pageWidgets/homeWidgets/homeMain.dart';
 import 'package:capstone/pageWidgets/otherUser.dart';
-import 'package:chewie/chewie.dart';
+// import 'package:chewie/chewie.dart';
+import 'package:better_player/better_player.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
@@ -20,6 +23,8 @@ import 'package:intl/intl.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:better_player/better_player.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+
+import 'postPage.dart';
 
 //conversion for showing users distance to post in miles rather than meters
 var meterToMileConversion = .000621371;
@@ -384,6 +389,7 @@ class ImagePostState extends State<ImagePost> {
   late DateTime dt;
   var formattedDate;
   late Image image;
+  late var url;
   initState() {
     dt = widget.postInfo['timestamp'].toDate();
     formattedDate = DateFormat.yMd().add_jm().format(dt);
@@ -399,8 +405,9 @@ class ImagePostState extends State<ImagePost> {
     Reference ref =
         FirebaseStorage.instance.ref().child(widget.postInfo['imageFile']);
     var downloadUrl = await ref.getDownloadURL();
-    var url = downloadUrl.toString();
-    image = Image.network(url);
+    url = downloadUrl.toString();
+    // image = Image.network(url);
+
   }
 
   @override
@@ -496,14 +503,25 @@ class ImagePostState extends State<ImagePost> {
                         width: constraints.maxWidth,
                         child: AspectRatio(
                           aspectRatio: 16 / 9,
-                          child: image,
+                          child: CachedNetworkImage(
+                            imageUrl: url,
+                            placeholder: (context, url) => Column(
+                              children: [
+                                Spacer(),
+                                CircularProgressIndicator(),
+                                Spacer()
+                              ]
+                            ),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
+                          )
+                          // ;image,
                         ));
                   });
                 } else {
                   return AspectRatio(
                       aspectRatio: 16 / 9,
-                      child: Center(child: CircularProgressIndicator()));;
-
+                      child: Center(child: CircularProgressIndicator()));
+                  ;
                 }
               }),
           // Text(widget.imagePath),
@@ -565,37 +583,35 @@ class VideoPostState extends State<VideoPost> {
   late DateTime dt;
   var formattedDate;
 
-  late VideoPlayerController videoPlayerController;
-  late ChewieController chewieController;
+  //note betterplayer auto disposes
   late BetterPlayerController _betterPlayerController;
   Future<void> getDownloadUrl() async {
     Reference ref =
         FirebaseStorage.instance.ref().child(widget.postInfo['videoFile']);
     var downloadUrl = await ref.getDownloadURL();
     var url = downloadUrl.toString();
-
-    videoPlayerController = VideoPlayerController.network(url);
-    chewieController = ChewieController(
-        videoPlayerController: videoPlayerController,
-        aspectRatio: 16 / 9,
-        autoPlay: false,
-        // looping: true,
-        autoInitialize: true); //this might fix the crashing
-
-    // BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-    //   BetterPlayerDataSourceType.network,
-    //   url
-    // );
-    // _betterPlayerController = BetterPlayerController(
-    //   BetterPlayerConfiguration(
-    //      autoDispose: false,
-    //       autoDetectFullscreenAspectRatio: true,
-    //       autoDetectFullscreenDeviceOrientation: true,
-    //   ),
-    //   betterPlayerDataSource: dataSource
-    // );
-
-    // return downloadUrl;
+    //configure data source with url
+    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      url,
+      bufferingConfiguration: BetterPlayerBufferingConfiguration(
+          minBufferMs: 2000,
+          maxBufferMs: 10000,
+          bufferForPlaybackMs: 1000,
+          bufferForPlaybackAfterRebufferMs: 2000),
+    );
+    _betterPlayerController = BetterPlayerController(
+        BetterPlayerConfiguration(
+            controlsConfiguration: BetterPlayerControlsConfiguration(
+              loadingWidget: CircularProgressIndicator(),
+              //while I can't fix fullscreen disable it
+              enableFullscreen: false
+            ),
+            // placeholder: Text("Loading"),
+            // showPlaceholderUntilPlay: true,
+            handleLifecycle: true,
+            autoDispose: true),
+        betterPlayerDataSource: dataSource);
   }
 
   @override
@@ -610,19 +626,10 @@ class VideoPostState extends State<VideoPost> {
 
   @override
   dispose() {
-    videoPlayerController.dispose();
-    chewieController.dispose();
     super.dispose();
   }
 
-  void listener() {
-    if (!chewieController.isFullScreen) {
-      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    }
-    // if(chewieController.isFullScreen){
-    //   SystemChrome.setPreferredOrientations([DeviceOrientation.landscapeRight]);
-    // }
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -731,7 +738,9 @@ class VideoPostState extends State<VideoPost> {
                     if (snapshot.connectionState == ConnectionState.done) {
                       return AspectRatio(
                           aspectRatio: 16 / 9,
-                          child: Chewie(controller: chewieController));
+                          child: BetterPlayer(
+                              controller:
+                                  _betterPlayerController));
                     } else {
                       return AspectRatio(
                           aspectRatio: 16 / 9,
@@ -749,25 +758,6 @@ class VideoPostState extends State<VideoPost> {
                   }),
             );
           }),
-          // return SizedBox(
-          //   height: 200,
-          //   child: AspectRatio(aspectRatio: 16/9,
-          //     child: BetterPlayer(
-          //       controller: _betterPlayerController
-          //     )
-          //
-          //   )
-          //   // child: Chewie(
-          //   //     controller: chewieController
-          //   // )
-          // );
-
-          //            Container(
-          //     child: Chewie(
-          //     controller:chewieController,
-          // ),
-          // ),
-          // VideoPlayerController.network(snapshot);
           Align(
             alignment: Alignment.centerLeft,
             child: Padding(

@@ -109,11 +109,10 @@ class OtherUserWidgetState extends State<OtherUserWidget> {
                         ])),
                     //POSTS LIST
                     Expanded(
-                      child: DraggableScrollableSheet(
-                          initialChildSize: 1,
-                          builder: (context, scrollController) {
-                            return PostsBuilder(userEmail: widget.email);
-                          }),
+                      child: SingleChildScrollView(
+                          physics:AlwaysScrollableScrollPhysics(parent:BouncingScrollPhysics()),
+                          child: PostsBuilder(userEmail: widget.email)
+                      ),
                     )
 
                     //put posted objects here

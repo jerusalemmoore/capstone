@@ -17,9 +17,15 @@ class PostPage extends StatefulWidget {
 }
 
 class PostPageState extends State<PostPage> {
-  ScrollController _scrollController = ScrollController(
+  ScrollController? _scrollController;
+  @override init(){
+    _scrollController  = ScrollController(
     keepScrollOffset: true,
-  );
+    );
+  }
+  @override dispose(){
+    _scrollController!.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

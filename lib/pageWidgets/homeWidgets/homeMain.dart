@@ -17,6 +17,9 @@ class HomeMainWidget extends StatefulWidget {
 
 class HomeMainWidgetState extends State<HomeMainWidget> with AutomaticKeepAliveClientMixin<HomeMainWidget> {
   var username;
+  final aboutController= TextEditingController();
+  String? aboutString;
+  FocusNode focusNode = FocusNode();
   @override
   bool get wantKeepAlive => true;
 
@@ -27,15 +30,32 @@ class HomeMainWidgetState extends State<HomeMainWidget> with AutomaticKeepAliveC
         .get()
         .then((DocumentSnapshot snapshot) {
       username = snapshot['username'];
+      aboutString = snapshot['about'];
+      if(aboutString != null){
+        aboutController.text = aboutString!;
+      }
+
     });
   }
-
+  Future<void> saveAboutInfo(String newAboutString) async{
+    await FirebaseFirestore.instance.collection('creators')
+        .doc(widget.user.email)
+        .set({
+      'about' : newAboutString
+    }, SetOptions(merge:true));
+  }
   @override
   initState() {
-    getUserInfo();
+    // getUserInfo();
     super.initState();
   }
-
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    aboutController.dispose();
+    focusNode.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -46,7 +66,7 @@ class HomeMainWidgetState extends State<HomeMainWidget> with AutomaticKeepAliveC
             return Center(
                 child: Column(
               children: <Widget>[
-                //user profile section
+                // user profile section
                 Container(
                     height: 150,
                     width: MediaQuery.of(context).size.width,
@@ -62,11 +82,56 @@ class HomeMainWidgetState extends State<HomeMainWidget> with AutomaticKeepAliveC
                                   style: TextStyle(fontSize: 30))),
                         ),
                         Expanded(
-                            child: Padding(
-                                padding: EdgeInsets.only(bottom: 20),
-                                child: Text("$username",
+                            child: Column(
+                              children:[
+                                Padding(
+                                    padding: EdgeInsets.fromLTRB(20,20,0,10),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                        child:Text("$username",
+                                            style: TextStyle(
+                                                fontSize: 20, color: Colors.white))
+                                    )
+            ),
+                                Padding(
+                                  padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                                  child:TextFormField(
                                     style: TextStyle(
-                                        fontSize: 20, color: Colors.white))))
+                                      fontSize: 15, color: Colors.white
+                                    ),
+                                    focusNode: focusNode,
+                                    // initialValue: aboutString == null? '' : aboutString,
+                                    textInputAction: TextInputAction.done,
+                                    controller: aboutController,
+                                    onTap: () {
+                                      //this will save input from about form when user taps text box to unfocus
+                                      if(focusNode.hasFocus){
+                                        focusNode.unfocus();
+                                        saveAboutInfo(aboutController.text);
+
+                                      }
+                                    },
+                                      //this will save input from about form when user taps enter on keyboard
+                                      onFieldSubmitted: (value){
+                                      saveAboutInfo(value);
+                                      },
+                                    maxLines:3,
+                                      keyboardType: TextInputType.multiline,
+                                      decoration:  InputDecoration(
+                                        hintText:  "Include info you'd like others to know about you here",
+                                        enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide(color:Colors.blue, width: 1.0),),
+
+                                        focusedBorder: OutlineInputBorder(
+                                          borderSide: BorderSide(color: Colors.white, width: 2.0),
+                                        ),
+                                      )
+                                  )
+                                )
+                              ]
+
+                            )
+          )
 
                       ])
                     ]),
@@ -76,12 +141,12 @@ class HomeMainWidgetState extends State<HomeMainWidget> with AutomaticKeepAliveC
                           blurRadius: 3,
                           spreadRadius: 5)
                     ])),
-                Expanded(
-                  child: DraggableScrollableSheet(
-                      initialChildSize: 1,
-                      builder: (context, scrollController) {
-                        return PostsBuilder(userEmail: widget.user.email);
-                      }),
+                Flexible(
+                  flex: 1,
+                  child: SingleChildScrollView(
+                    physics:AlwaysScrollableScrollPhysics(parent:BouncingScrollPhysics()),
+                        child: PostsBuilder(userEmail: widget.user.email)
+                      ),
                 )
               ],
             ));

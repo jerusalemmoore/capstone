@@ -37,6 +37,7 @@ class MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixin
   // static const String _kPermissionGrantedMessage = 'Permission granted.';
 
   final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
+  //keep alive for each page
   @override
   bool get wantKeepAlive => true;
 
@@ -80,6 +81,7 @@ class MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixin
   @override
   void dispose() {
     mapController.dispose();
+    // markers.clear();
     super.dispose();
   }
 

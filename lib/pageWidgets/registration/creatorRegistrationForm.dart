@@ -85,7 +85,7 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
     FirebaseFirestore.instance.collection('creators');
     try{
       userDoc = creators
-          .doc(email)
+          .doc(email.toLowerCase())
           .set({
         'email': email,
         'username': username,

@@ -12,15 +12,29 @@ class ExploreWidget extends StatefulWidget {
 class ExploreWidgetState extends State<ExploreWidget> with AutomaticKeepAliveClientMixin<ExploreWidget> {
   @override
   bool get wantKeepAlive => true;
-
   Widget build(BuildContext context) {
     super.build(context);
 
     return Center(
-        child: DraggableScrollableSheet(
-            initialChildSize: 1,
-            builder: (context, scrollController) {
-              return ExplorePostsBuilder(user: widget.user);
-            }));
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Flexible(
+              child: SingleChildScrollView(
+                physics:AlwaysScrollableScrollPhysics(parent:BouncingScrollPhysics()),
+
+                child: ExplorePostsBuilder(user:widget.user),
+              )
+          )
+        ]
+      )
+      // child:
+
+        // DraggableScrollableSheet(
+        //     initialChildSize: 1,
+        //     builder: (context, scrollController) {
+        //       return ExplorePostsBuilder(user: widget.user);
+        //     })
+    );
   }
 }
