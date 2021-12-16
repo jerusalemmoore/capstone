@@ -232,7 +232,7 @@ class ImageFormState extends State<ImageForm> {
                         foregroundColor:
                         MaterialStateProperty.all<Color>(Colors.white),
                       ),
-                      onPressed: () async {
+                      onPressed: () {
                         if(imageFile == null){
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Error, no image selected')),
@@ -245,21 +245,33 @@ class ImageFormState extends State<ImageForm> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Processing Data')),
                             );
-                            bool success = await addPost();
-                            if (success) {
+                            addPost().then((value){
+                              if(value == true){
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Post Successful')));
+                                Navigator.pop(context);
+                              }
+                              else if(value == false){
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text('Error processing data, try again')),
+                                        );
+                                }
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Post Successful')),
-                                // Navigator.popUntil(context, ModalRoute.withName("userHome"));
-
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Error processing data, try again')),
-                              );
-                            }
+                            });
+                            // if (success) {
+                            //
+                            //   ScaffoldMessenger.of(context).showSnackBar(
+                            //     const SnackBar(content: Text('Post Successful')),
+                            //     // Navigator.popUntil(context, ModalRoute.withName("userHome"));
+                            //
+                            //   );
+                            // } else {
+                            //   ScaffoldMessenger.of(context).showSnackBar(
+                            //     const SnackBar(content: Text('Error processing data, try again')),
+                            //   );
+                            // }
                           }
-                          Navigator.pop(context);
+                          // Navigator.pop(context);
 
                         }
 

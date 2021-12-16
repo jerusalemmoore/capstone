@@ -28,7 +28,7 @@ class CreatorRegistrationForm extends StatefulWidget {
 // String address;
 class RegistrationFormState extends State<CreatorRegistrationForm> {
   dynamic _validationMsg;
-  bool exists = false;
+  // bool exists = false;
   bool _isChecking = false;
   var username;
   var email;
@@ -131,8 +131,9 @@ class RegistrationFormState extends State<CreatorRegistrationForm> {
     setState(() {});
   }
   Future<bool> usernameExists() async{
+    bool exists = false;
     print('username $username');
-    var collection = await FirebaseFirestore.instance.collection('creators').
+    await FirebaseFirestore.instance.collection('creators').
     get()
     .then((QuerySnapshot snapshot){
       snapshot.docs.forEach((doc){

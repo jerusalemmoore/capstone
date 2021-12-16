@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart' as loc;
 
 const kGoogleApiKey = "AIzaSyAnv3Mv89UoA9m4Jiw9jxeCyVoVDKg9M9w";
 
@@ -26,6 +27,7 @@ class MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixin
   var docs = [];
   List<Marker> markers = [];
   late Position currentPosition;
+  late loc.LocationData currentLocation;
   late GoogleMapController mapController;
   late LatLng _center;
 
@@ -143,20 +145,51 @@ class MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixin
     return true;
   }
 
-  Future<void> loadPos() async {
-    bool permission = await _handlePermission();
-    if (permission) {
-      // print("success loading pos");
-      currentPosition = await Geolocator.getCurrentPosition(
-          forceAndroidLocationManager: true);
-      print("lat ${currentPosition.latitude}");
-      print("long ${currentPosition.longitude}");
-      _center = LatLng(currentPosition.latitude, currentPosition.longitude);
+  Future<bool> loadPos() async {
+    // bool permission = await _handlePermission();
+    // try{
+    //   if (permission) {
+    //     // print("success loading pos");
+    //     currentPosition = await Geolocator.getCurrentPosition(
+    //         timeLimit: Duration(seconds: 10),
+    //         forceAndroidLocationManager: true);
+    //     print("lat ${currentPosition.latitude}");
+    //     print("long ${currentPosition.longitude}");
+    //     _center = LatLng(currentPosition.latitude, currentPosition.longitude);
+    //     return true;
+    //   }
+    //   else {
+    //     print("failure");
+    //     _center = LatLng(39.7332194472,-121.825863414);
+    //   }
+    // } catch (e) {
+    //   print("There was a timeout exception Error: $e");
+    // }
+    // return false;
+
+    loc.Location location =  new loc.Location();
+
+    bool _serviceEnabled;
+    loc.PermissionStatus _permissionGranted;
+    loc.LocationData _locationData;
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) {
+        return false;
+      }
     }
-    else {
-      // print("failure");
-      _center = LatLng(39.7332194472,-121.825863414);
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == loc.PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != loc.PermissionStatus.granted) {
+        return false;
+      }
     }
+
+    currentLocation = await location.getLocation();
+    _center = LatLng(currentLocation.latitude!, currentLocation.longitude!);
+    return true;
 
 
   // print('center $_center');
@@ -173,35 +206,52 @@ class MapWidgetState extends State<MapWidget> with AutomaticKeepAliveClientMixin
         future: loadPos(),
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            // print(snapshot.data[0]);
-            return  Stack(
-              children: [
-                GoogleMap(
-                myLocationEnabled: true,
-                myLocationButtonEnabled: true,
-                onMapCreated: _onMapCreated,
-                initialCameraPosition:
-                CameraPosition(target: _center, zoom: 15),
-                markers: markers.toSet()),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child:ElevatedButton(onPressed: (){
-                    setState(() {
+            if(snapshot.data == true){
+              return  Stack(
+                  children: [
+                    GoogleMap(
+                        myLocationEnabled: true,
+                        myLocationButtonEnabled: true,
+                        onMapCreated: _onMapCreated,
+                        initialCameraPosition:
+                        CameraPosition(target: _center, zoom: 15),
+                        markers: markers.toSet()),
+                    Align(
+                        alignment: Alignment.topCenter,
+                        child:ElevatedButton(onPressed: (){
+                          setState(() {
 
-                    });
-                  }, child: Text("Refresh"))
-                )
-              ]
-            );
+                          });
+                        }, child: Text("Refresh"))
+                    )
+                  ]
+              );
+            }
+            else if(snapshot.data == false){
+              return Column(
+                  children:[
+                    Text("Error, locator timed out gathering location, please retry"),
+                    IconButton(
+                      icon: Icon(Icons.refresh),
+                      onPressed: () {
+                        setState(() {
+
+                        });
+                      },
+
+                    )
+                  ]
+              );
+            }
+            // print(snapshot.data[0]);
+
           } else if (snapshot.hasError) {
             return Text("Error");
-          } else {
-            return Center(child: CircularProgressIndicator());
           }
+            return Center(child: CircularProgressIndicator());
+
         }
         );
-    Column(
-      children: <Widget>[Text("$currentPosition")],
-    );
+
   }
 }

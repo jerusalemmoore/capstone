@@ -24,7 +24,7 @@ class PostPageState extends State<PostPage> {
     );
   }
   @override dispose(){
-    _scrollController!.dispose();
+    _scrollController?.dispose();
   }
   @override
   Widget build(BuildContext context) {

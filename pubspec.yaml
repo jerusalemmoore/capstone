@@ -42,7 +42,8 @@ dependencies:
   flutter_signin_button: ^2.0.0
 #  flutter_google_places: ^0.3.0
   location: ^4.3.0
-  geolocator: ^7.6.2
+  geolocator: ^8.0.1
+
   geocoding: ^2.0.1
   rxdart: ^0.27.2
   uuid: ^3.0.4
