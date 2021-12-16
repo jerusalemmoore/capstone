@@ -5,3 +5,4 @@
 * Currently can't edit avatar section with image 
 * user navigation not implemented with posts on Explore page like they are on the Activity Map
 * Project still in need of proper Unit Testing
+* Project could use more testing in areas with different wifi network to analyze how well the geolocation works, sometimes this hangs, still need a timeout for this
