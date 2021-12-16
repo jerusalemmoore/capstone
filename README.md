@@ -5,6 +5,8 @@ California State University, Chico
 Computer Science Capstone Project
 Fall 2021
 
+NOTE: Please see release notes and version 2 features to come  
+
 I am building an application that allows artists and creators to post their works in a public media space, as well as connect patrons 
 to creators in their local area.
   - The app provides patrons with artistic works for purchase or artists performance locations on a local scale
