@@ -13,10 +13,10 @@ to creators in their local area.
   
 How it works:  
 * Creators can upload photos or images advertising their work on a public repository on their home page that will be linked to their account  
-All Creators work are viewable from an explore page  
-  This Explore Page organizes how creators galleries are displayed based off of how close the current user is to the address that the creator is based from  
- Creators are also allowed to host public events by making a post providing a location they intend on being present and when  
-  Any events the creator hosts will be viewable by pin on the Activity Map page  
-  Clicking on these pins on the Activity Map navigates you to that Creators home page where you can see all of their work  
+* All Creators work are viewable from an explore page  
+  * This Explore Page organizes how creators galleries are displayed based off of how close the current user is to the address that the creator is based from  
+* Creators are also allowed to host public events by making a post providing a location they intend on being present and when  
+  * Any events the creator hosts will be viewable by pin on the Activity Map page  
+  * Clicking on these pins on the Activity Map navigates you to that Creators home page where you can see all of their work  
     
     
