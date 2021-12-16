@@ -12,7 +12,7 @@ to creators in their local area.
   - Explore creators pages and view their individual galleries
   
 How it works:  
-&emsp  -Creators can upload photos or images advertising their work on a public repository on their home page that will be linked to their account  
+* -Creators can upload photos or images advertising their work on a public repository on their home page that will be linked to their account  
   -All Creators work are viewable from an explore page  
     -This Explore Page organizes how creators galleries are displayed based off of how close the current user is to the address that the creator is based from  
   -Creators are also allowed to host public events by making a post providing a location they intend on being present and when  
