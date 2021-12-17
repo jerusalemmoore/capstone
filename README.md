@@ -6,6 +6,8 @@ Computer Science Capstone Project
 Fall 2021
 
 NOTE: For demo of working prototype at the end of the semester, please watch the videos in the "Prototype Demo" folder.  
+FOR DR. SIEWERT: demo parts 3 and 4 include what I couldn't demonstrate during presentations.  
+
 NOTE: Please see release notes and version 2 features to come  
 
 I am building an application that allows artists and creators to post their works in a public media space, as well as connect patrons 
