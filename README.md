@@ -1,7 +1,7 @@
 # Artsy: Art Multimedia/Public Event Hosting Service
 
 Jerusalem Moore  
-California State University, Chico 
+California State University, Chico  
 Computer Science Capstone Project  
 Fall 2021  
 
