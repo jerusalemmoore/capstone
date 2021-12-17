@@ -1,9 +1,9 @@
 # capstone
 
-Jerusalem Moore
+Jerusalem Moore  
 California State University, Chico 
-Computer Science Capstone Project
-Fall 2021
+Computer Science Capstone Project  
+Fall 2021  
 
 NOTE: For demo of working prototype at the end of the semester, please watch the videos in the "Prototype Demo" folder.  
 FOR DR. SIEWERT: demo parts 3 and 4 include what I couldn't demonstrate during presentations.  
