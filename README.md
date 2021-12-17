@@ -1,4 +1,4 @@
-# capstone
+# Artsy: Art Multimedia/Public Event Hosting Service
 
 Jerusalem Moore  
 California State University, Chico 
