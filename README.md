@@ -11,7 +11,7 @@ FOR DR. SIEWERT: demo parts 3 and 4 include what I couldn't demonstrate during p
 NOTE: Please see release notes and version 2 features to come  
 
 I am building an application that allows artists and creators to post their works in a public media space, as well as connect patrons 
-to creators in their local area for either business or notoriety purpases.
+to creators in their local area for either business or notoriety purposes.
   - The app provides patrons with artistic works for purchase or artists performance locations on a local scale
     - The closer a Creator is based to your current location, the higher chance you have of seeing their work
   - Using geolocation, get directions to artists and musicians hosting events near you
